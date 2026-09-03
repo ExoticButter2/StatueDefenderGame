@@ -5,6 +5,7 @@ export type Lobby = typeof(setmetatable({} :: {
 	touchPart: BasePart,
 	enterPart: BasePart,
 	exitPart: BasePart,
+	connection: RBXScriptConnection
 }))
 
 local function OnTouchPart(otherPart: BasePart, self: Lobby)
@@ -25,11 +26,16 @@ function LobbyClass.new(touchPart: BasePart, enterPart: BasePart, exitPart: Base
 	self.enterPart = enterPart
 	self.exitPart = exitPart
 
-	touchPart.Touched:Connect(function(otherPart)
+	self.connection = touchPart.Touched:Connect(function(otherPart)
 		OnTouchPart(otherPart, self)
 	end)
 
 	return self
+end
+
+function LobbyClass:OnLobbyRemove()
+    self.connection:Disconnect()
+	print("Lobby removed!")
 end
 
 function LobbyClass:AddPlayer(player: Player) --all checks already performed
