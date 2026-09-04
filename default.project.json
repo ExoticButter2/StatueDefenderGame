@@ -4,7 +4,8 @@
     "$className": "DataModel",
 
     "ReplicatedStorage": {
-      "$path": "src/ReplicatedStorage"
+      "$path": "src/ReplicatedStorage",
+      "$ignoreUnknownInstances": true
     },
 
     "ServerScriptService": {
@@ -12,6 +13,7 @@
     },
 
     "StarterPlayer": {
+      "$ignoreUnknownInstances": true,
       "StarterPlayerScripts": {
         "$path": "src/StarterPlayer/StarterPlayerScripts"
       }
@@ -19,10 +21,7 @@
 
     "ServerStorage": {
       "$path": "src/ServerStorage",
-
-      "Configs": {
-        "$path": "src/ServerStorage"
-      }
+      "$ignoreUnknownInstances": true
     }
   }
 }
