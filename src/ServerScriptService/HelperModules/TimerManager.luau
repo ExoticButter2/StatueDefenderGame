@@ -17,8 +17,8 @@ function TimerManager.CreateTimer()
 	return id
 end
 
-function TimerManager.FindTimer(id: number)
-	local timer = idToTimerDictionary[id]
+function TimerManager.FindTimer(timerId: number)
+	local timer = idToTimerDictionary[timerId]
 
 	if not timer then
 		return nil
