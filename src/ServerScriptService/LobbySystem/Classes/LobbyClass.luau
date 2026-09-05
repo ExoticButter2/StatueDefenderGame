@@ -6,56 +6,90 @@ local serverStorage = game:GetService("ServerStorage")
 
 local lobbyDataModule = require(serverScriptService.LobbySystem.Data.LobbyData)
 local timerModule = require(serverScriptService.HelperModules.TimerModuleClass)
+local timerDisplayModule = require(serverScriptService.HelperModules.TimerDisplay)
 
 local eventsFolderShared: Folder = replicatedStorage:FindFirstChild("Events")
+local lobbyEventsFolderShared: Folder = eventsFolderShared:FindFirstChild("Lobby")
+
 local eventsFolderServer: Folder = serverStorage:FindFirstChild("Events")
+local lobbyEventsFolderServer: Folder = eventsFolderServer:FindFirstChild("Lobby")
 
-local lobbyHostJoinEvent: RemoteEvent = eventsFolderShared:FindFirstChild("OnLobbyHostJoin")
-local lobbyPlayerJoinRemoteEvent: RemoteEvent = eventsFolderShared:FindFirstChild("OnLobbyPlayerJoin")
-local lobbyPlayerLeaveRemoteEvent: RemoteEvent = eventsFolderShared:FindFirstChild("OnLobbyPlayerLeave")
+local lobbyHostJoinEvent: RemoteEvent = lobbyEventsFolderShared:FindFirstChild("OnLobbyHostJoin")
+local lobbyHostLeaveEvent: RemoteEvent = lobbyEventsFolderShared:FindFirstChild("OnLobbyHostLeave")
 
-local lobbyPlayerJoinBindableEvent: BindableEvent = eventsFolderServer:FindFirstChild("LobbyPlayerJoinServer")
-local lobbyPlayerLeaveBindableEvent: BindableEvent = eventsFolderServer:FindFirstChild("LobbyPlayerLeaveServer")
-local lobbyHostJoinBindableEvent: BindableEvent = eventsFolderServer:FindFirstChild("LobbyHostJoinServer")
-local lobbyHostLeaveBindableEvent: BindableEvent = eventsFolderServer:FindFirstChild("LobbyHostLeaveServer")
+local lobbyStartEvent: RemoteEvent = lobbyEventsFolderShared:FindFirstChild("LobbyStartRequest")
+
+local lobbyPlayerJoinRemoteEvent: RemoteEvent = lobbyEventsFolderShared:FindFirstChild("OnLobbyPlayerJoin")
+local lobbyPlayerLeaveRemoteEvent: RemoteEvent = lobbyEventsFolderShared:FindFirstChild("OnLobbyPlayerLeave")
+
+local lobbyPlayerJoinBindableEvent: BindableEvent = lobbyEventsFolderServer:FindFirstChild("LobbyPlayerJoinServer")
+local lobbyPlayerLeaveBindableEvent: BindableEvent = lobbyEventsFolderServer:FindFirstChild("LobbyPlayerLeaveServer")
+local lobbyHostJoinBindableEvent: BindableEvent = lobbyEventsFolderServer:FindFirstChild("LobbyHostJoinServer")
+local lobbyHostLeaveBindableEvent: BindableEvent = lobbyEventsFolderServer:FindFirstChild("LobbyHostLeaveServer")
 
 local LobbyClass = {}
 
 export type Lobby = typeof(setmetatable({} :: {
-	players: {},
 	touchConnection: RBXScriptConnection,
 	playerLeaveConnection: RBXScriptConnection,
 	lobbyData: lobbyDataModule.LobbyData,
-	timer: timerModule.Timer,
-	touchPart: BasePart,
-	enterPart: BasePart,
-	exitPart: BasePart,
-	lobbyOpen: boolean,
-	lobbyId: number,
-	hostId: number,
 }))
 
+function LobbyClass:StartLobby()
+	--lobbyStartEvent:FireAllClients(self.lobbyData.lobbyId)
+	print("Started lobby")
+
+	if not self.lobbyData then
+		warn("Lobby data for lobby missing")
+		return
+	end
+
+	if not self.lobbyData.lobbyDuration then
+		warn("Lobby duration missing")
+		return
+	end
+
+	if not self.lobbyData.timer then
+		warn("Lobby timer missing")
+		return
+	end
+	self.lobbyData.timer.duration = self.lobbyData.lobbyDuration
+	self.lobbyData.timer:StartTimer()
+end
+
+-- function LobbyClass:ChangeLobbySettings(args: {})--changes lobby settings args
+-- 	local lobbyData = self.lobbyData
+
+-- 	for setting, v in pairs(args) do
+-- 		if lobbyData[setting] then--if setting doesn't exist
+
+-- 		end
+-- 	end
+-- end
+
 function LobbyClass:OpenLobby()
-	self.lobbyOpen = true
+	self.lobbyData.lobbyOpen = true
 	print("Opened lobby")
 end
 
 function LobbyClass:CloseLobby()
-	self.lobbyOpen = false
+	self.lobbyData.lobbyOpen = false
 	print("Closed lobby")
 end
 
 local function ValidatePlayerWithConfig(player: Player, self: Lobby)
-	if self.lobbyData.friendsOnly and not player:IsFriendsWithAsync(self.lobbyData.hostId) then
+	local lobbyData = self.lobbyData
+
+	if lobbyData.friendsOnly and not player:IsFriendsWithAsync(lobbyData.hostId) then
 		return false
 	end
-	if #self.players >= self.lobbyData.playerLimit then
+	if #lobbyData.players >= lobbyData.playerLimit then
 		return false
 	end
-	if table.find(self.players, player.UserId) then
+	if table.find(lobbyData.players, player.UserId) then
 		return false
 	end
-	if not self.lobbyOpen then
+	if not lobbyData.lobbyOpen then
 		return false
 	end
 
@@ -66,39 +100,42 @@ local function AddHost(player: Player, self: Lobby)
 	self:AddPlayer(player)
 	self:CloseLobby() --make setup open lobby after
 
-	self.hostId = player.UserId
+	self.lobbyData.hostId = player.UserId
 
-	lobbyHostJoinEvent:FireClient(player)
-	lobbyHostJoinBindableEvent:Fire(self.lobbyId)
+	lobbyHostJoinEvent:FireClient(player, self.lobbyData.lobbyId)
+	lobbyHostJoinBindableEvent:Fire(self.lobbyData.lobbyId)
 	print("Added host!")
 end
 
 local function RemoveHost(self: Lobby, player: Player)
-	local hostIndex = table.find(self.players, self.hostId)
+	local lobbyData = self.lobbyData
+
+	local hostIndex = table.find(lobbyData.players, lobbyData.hostId)
 
 	if not hostIndex then
 		warn("No host to remove!")
 		return
 	end
 
-	self.players[hostIndex] = nil
-	self.hostId = nil
+	lobbyData.players[hostIndex] = nil
+	lobbyData.hostId = nil
 
-	lobbyHostLeaveBindableEvent:Fire(self.lobbyId)
+	lobbyHostLeaveEvent:FireClient(player, lobbyData.lobbyId)
+	lobbyHostLeaveBindableEvent:Fire(lobbyData.lobbyId)
 
 	if not player.Character then
 		warn("No player character found when removing player")
 		return
 	end
 
-	player.Character:PivotTo(self.exitPart.CFrame)
+	player.Character:PivotTo(lobbyData.exitPart.CFrame)
 end
 
 local function AttemptJoin(otherPart: BasePart, self: Lobby) --validate before adding player
 	local player = players:GetPlayerFromCharacter(otherPart.Parent)
 
 	if player then
-		if #self.players == 0 then --if host, dont validate
+		if #self.lobbyData.players == 0 then --if host, dont validate
 			AddHost(player, self)
 			return
 		end
@@ -114,36 +151,23 @@ end
 local function OnPlayerLeave(player: Player, self: Lobby)
 	local playerId = player.UserId
 
-	if table.find(self.players, playerId) then
+	if table.find(self.lobbyData.players, playerId) then
 		self:RemovePlayer(player)
 	end
 end
 
-function LobbyClass.new(
-	touchPart: BasePart,
-	enterPart: BasePart,
-	exitPart: BasePart,
-	lobbyData: lobbyDataModule.LobbyData
-): Lobby
+function LobbyClass.new(lobbyData: lobbyDataModule.LobbyData): Lobby
 	local self = setmetatable({}, { __index = LobbyClass })
 
-	self.players = {}
-	self.touchPart = touchPart
-	self.enterPart = enterPart
-	self.exitPart = exitPart
+	self.lobbyData = lobbyData
 
-	self.lobbyOpen = true
-
-	self.touchConnection = touchPart.Touched:Connect(function(otherPart)
+	self.touchConnection = lobbyData.touchPart.Touched:Connect(function(otherPart)
 		AttemptJoin(otherPart, self)
 	end)
 
 	self.playerLeaveConnection = players.PlayerRemoving:Connect(function(player)
 		OnPlayerLeave(player, self)
 	end)
-
-	self.lobbyData = lobbyData
-	self.timer = timerModule.new()
 
 	self.hostId = self.lobbyData.hostId
 	self.lobbyId = self.lobbyData.lobbyId
@@ -164,57 +188,60 @@ function LobbyClass:RemoveLobby()
 end
 
 function LobbyClass:AddPlayer(player: Player) --all checks already performed
+	local lobbyData = self.lobbyData
 	local playerId = player.UserId
 
 	print("Adding player..")
-	print("Players in lobby: " .. #self.players)
+	print("Players in lobby: " .. #lobbyData.players)
 
-	if not table.find(self.players, playerId) then
-		table.insert(self.players, playerId)
-		player.Character:PivotTo(self.enterPart.CFrame)
+	if not table.find(lobbyData.players, playerId) then
+		table.insert(lobbyData.players, playerId)
+		player.Character:PivotTo(lobbyData.enterPart.CFrame)
 		print("Added " .. player.Name .. " to the lobby")
 	end
 
 	lobbyPlayerJoinRemoteEvent:FireClient(player)
-	lobbyPlayerJoinBindableEvent:Fire(player, self.lobbyId)
+	lobbyPlayerJoinBindableEvent:Fire(player, lobbyData.lobbyId)
 	print("Added player")
 end
 
 function LobbyClass:RemovePlayer(player: Player)
 	local playerId = player.UserId
+	local lobbyData = self.lobbyData
 
-	local playerIndex = table.find(self.players, playerId)
+	local playerIndex = table.find(lobbyData.players, playerId)
 
 	if not playerIndex then
 		warn(player.Name .. " is not in the lobby")
 		return
 	end
 
-	if playerId == self.hostId then
+	if playerId == lobbyData.hostId then
 		RemoveHost(self, player) --only calls host leave event
 		self:RemoveAllPlayers()
 	end
 
-	table.remove(self.players, playerIndex)
+	table.remove(lobbyData.players, playerIndex)
 	print("Removed " .. player.Name .. " from the lobby")
 
-	lobbyPlayerLeaveRemoteEvent:FireClient(player, self.lobbyId)
-	lobbyPlayerLeaveBindableEvent:Fire(player, self.lobbyId)
+	lobbyPlayerLeaveRemoteEvent:FireClient(player, lobbyData.lobbyId)
+	lobbyPlayerLeaveBindableEvent:Fire(player, lobbyData.lobbyId)
 
 	if not player.Character then
 		warn("No player character found when removing player")
 		return
 	end
 
-	player.Character:PivotTo(self.exitPart.CFrame)
+	player.Character:PivotTo(lobbyData.exitPart.CFrame)
 end
 
 function LobbyClass:RemoveAllPlayers()
-	for _, player in ipairs(self.players) do
+	for _, player in ipairs(self.lobbyData.players) do
 		self:RemovePlayer(player)
 	end
 
 	self:OpenLobby()
+	self.lobbyData.timer:StopTimer()
 	print("Removed all players from lobby")
 end
 
@@ -225,7 +252,7 @@ function LobbyClass:TeleportAllPlayersToPlace()
 	local teleportOptions = Instance.new("TeleportOptions")
 	teleportOptions.ReservedServerAccessCode = privateServerId
 
-	teleportService:TeleportAsync(placeId, self.players, teleportOptions)
+	teleportService:TeleportAsync(placeId, self.lobbyData.players, teleportOptions)
 end
 
 return LobbyClass

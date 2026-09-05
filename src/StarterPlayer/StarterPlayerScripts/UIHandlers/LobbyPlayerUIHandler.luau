@@ -4,12 +4,13 @@ local players = game:GetService("Players")
 local playerGui = players.LocalPlayer:WaitForChild("PlayerGui")
 
 local eventsFolder = replicatedStorage:WaitForChild("Events")
+local lobbyEventsFolder = eventsFolder:WaitForChild("Lobby")
 
-local lobbyExitRequestEvent: RemoteEvent = eventsFolder:WaitForChild("LobbyExitRequest")
+local lobbyExitRequestEvent: RemoteEvent = lobbyEventsFolder:WaitForChild("LobbyExitRequest")
 
 local lobbyUIFolder: Folder = playerGui:WaitForChild("LobbyUI")
 
-local exitButtonGui: SurfaceGui = lobbyUIFolder:WaitForChild("ExitGui")
+local exitButtonGui: SurfaceGui = lobbyUIFolder:WaitForChild("PlayerGui")
 local exitButton: TextButton = exitButtonGui:WaitForChild("Frame"):WaitForChild("ExitButton")
 
 local lobbyPlayerUIHandler = {}

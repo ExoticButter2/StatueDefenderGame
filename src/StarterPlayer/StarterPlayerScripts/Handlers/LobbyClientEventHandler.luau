@@ -4,13 +4,16 @@ local starterPlayer = game:GetService("StarterPlayer")
 local starterPlayerScripts = starterPlayer:WaitForChild("StarterPlayerScripts")
 local uiHandlersFolder: Folder = starterPlayerScripts:WaitForChild("UIHandlers")
 
-local eventsFolder = replicatedStorage:WaitForChild("Events")
+local eventsFolder: Folder = replicatedStorage:WaitForChild("Events")
+local lobbyEventsFolder: Folder = eventsFolder:WaitForChild("Lobby")
 
-local onLobbyPlayerJoin: RemoteEvent = eventsFolder:FindFirstChild("OnLobbyPlayerJoin")
-local onLobbyHostJoin: RemoteEvent = eventsFolder:FindFirstChild("OnLobbyHostJoin")
-local onLobbyPlayerLeave: RemoteEvent = eventsFolder:FindFirstChild("OnLobbyPlayerLeave")
+local onLobbyPlayerJoin: RemoteEvent = lobbyEventsFolder:WaitForChild("OnLobbyPlayerJoin")
+local onLobbyHostJoin: RemoteEvent = lobbyEventsFolder:WaitForChild("OnLobbyHostJoin")
+local onLobbyPlayerLeave: RemoteEvent = lobbyEventsFolder:WaitForChild("OnLobbyPlayerLeave")
+local onLobbyHostLeave: RemoteEvent = lobbyEventsFolder:WaitForChild("OnLobbyHostLeave")
 
 local lobbyPlayerUIHandler = require(uiHandlersFolder.LobbyPlayerUIHandler)
+local lobbyHostUIHandler = require(uiHandlersFolder.LobbyHostUIHandler)
 
 local LobbyClientEventHandler = {}
 
@@ -21,17 +24,25 @@ end
 
 local function OnHostJoin()
 	print("Joined lobby as host and received via event")
+	lobbyHostUIHandler.EnableHostUI()
 end
 
 local function OnPlayerLeave()
-	print("Left lobby")
+	print("Left lobby as player and received via event")
 	lobbyPlayerUIHandler.DisablePlayerUI()
+end
+
+local function OnHostLeave()
+	print("Left lobby as host and received via event")
+	lobbyHostUIHandler.DisableHostUI()
 end
 
 function LobbyClientEventHandler.Initialize()
 	onLobbyPlayerJoin.OnClientEvent:Connect(OnPlayerJoin)
-	onLobbyHostJoin.OnClientEvent:Connect(OnHostJoin)
 	onLobbyPlayerLeave.OnClientEvent:Connect(OnPlayerLeave)
+
+	onLobbyHostJoin.OnClientEvent:Connect(OnHostJoin)
+	onLobbyHostLeave.OnClientEvent:Connect(OnHostLeave)
 end
 
 return LobbyClientEventHandler
