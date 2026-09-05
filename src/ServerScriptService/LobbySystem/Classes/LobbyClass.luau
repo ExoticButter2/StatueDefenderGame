@@ -5,8 +5,6 @@ local replicatedStorage = game:GetService("ReplicatedStorage")
 local serverStorage = game:GetService("ServerStorage")
 
 local lobbyDataModule = require(serverScriptService.LobbySystem.Data.LobbyData)
-local timerModule = require(serverScriptService.HelperModules.TimerModuleClass)
-local timerDisplayModule = require(serverScriptService.HelperModules.TimerDisplay)
 
 local eventsFolderShared: Folder = replicatedStorage:FindFirstChild("Events")
 local lobbyEventsFolderShared: Folder = eventsFolderShared:FindFirstChild("Lobby")
@@ -44,7 +42,9 @@ function LobbyClass:ResetLobby()
 	print("Reset lobby: " .. self.lobbyData.lobbyId)
 end
 
-function LobbyClass:StartLobby()
+function LobbyClass:StartLobby(args)
+	self:ChangeLobbySettings(args)
+
 	task.spawn(function()
 		self.lobbyData.timer:StartTimer()
 	end)
@@ -54,15 +54,18 @@ function LobbyClass:StartLobby()
 	print("Started lobby from lobby class")
 end
 
--- function LobbyClass:ChangeLobbySettings(args: {})--changes lobby settings args
--- 	local lobbyData = self.lobbyData
+function LobbyClass:ChangeLobbySettings(args: {}) --changes lobby settings args
+	local lobbyData = self.lobbyData
 
--- 	for setting, v in pairs(args) do
--- 		if lobbyData[setting] then--if setting doesn't exist
+	for setting, v in pairs(args) do
+		if not lobbyData.args[setting] then --if setting doesn't exist
+			warn("No setting found in args with given args table")
+			continue
+		end
 
--- 		end
--- 	end
--- end
+		lobbyData.args[setting] = v
+	end
+end
 
 function LobbyClass:OpenLobby()
 	self.lobbyData.lobbyOpen = true

@@ -48,15 +48,15 @@ function TimerModule.new(timerSpeed: number?, duration: number?, id: number): Ti
 	return self
 end
 
-function TimerModule:OnTimerStart(timerId: number)
+function TimerModule:OnTimerStart()
 	print("Timer started")
 end
 
-function TimerModule:OnTimerTick(timerId: number)
+function TimerModule:OnTimerTick()
 	print("Timer tick")
 end
 
-function TimerModule:OnTimerFinish(timerId: number)
+function TimerModule:OnTimerFinish()
 	print("Timer finished")
 end
 

@@ -12,10 +12,8 @@ local lobbyEventsFolderClient: Folder = eventsFolderClient:FindFirstChild("Lobby
 local lobbySystemFolder: Folder = serverScriptService:FindFirstChild("LobbySystem")
 
 local managersFolder: Folder = lobbySystemFolder:FindFirstChild("Managers")
-local classesFolder: Folder = lobbySystemFolder:FindFirstChild("Classes")
 
 local lobbyManager = require(managersFolder.LobbyManager)
-local lobbyClass = require(classesFolder.LobbyClass)
 
 local lobbyPlayerJoinEvent: BindableEvent = lobbyEventsFolderServer:FindFirstChild("LobbyPlayerJoinServer")
 local lobbyPlayerLeaveEvent: BindableEvent = lobbyEventsFolderServer:FindFirstChild("LobbyPlayerLeaveServer")
@@ -58,7 +56,7 @@ end
 local function OnLobbyStartRequest(player: Player)
 	print("Start requested from player id: " .. player.UserId)
 	print("Starting lobby..")
-	lobbyManager.StartLobbyFromPlayerId(player.UserId)
+	lobbyManager.StartLobbyFromPlayerId(player.UserId, {})
 end
 
 local function OnLobbyTimerFinish(timerId: number)

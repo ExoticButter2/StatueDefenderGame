@@ -116,14 +116,14 @@ function LobbyManager.CloseLobby(closingLobbyId: number)
 end
 
 function LobbyManager.OnLobbyTimerFinish(timerId: number)
-	local lobbyId: number = timerManager.FindLobbyIdFromTimerId(timerId)
+	local timerLobbyId: number = timerManager.FindLobbyIdFromTimerId(timerId)
 
-	if not lobbyId then
+	if not timerLobbyId then
 		warn("No lobby id found from timer id")
 		return
 	end
 
-	local lobby: lobbyClass.Lobby = LobbyManager.FindLobby(lobbyId)
+	local lobby: lobbyClass.Lobby = LobbyManager.FindLobby(timerLobbyId)
 
 	if not lobby then
 		warn("No lobby found from lobby id")
@@ -142,7 +142,7 @@ function LobbyManager.StartLobby(startingLobbyId: number, lobbySettingsArgs: {})
 		return
 	end
 
-	lobby:StartLobby(startingLobbyId, {})
+	lobby:StartLobby(lobbySettingsArgs)
 	print("Started lobby")
 end
 

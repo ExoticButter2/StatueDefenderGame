@@ -23,7 +23,7 @@ local function OnTimerTick(timerId: number, self: TimerDisplay)
 	if timerId == self.timer.id then
 		self:UpdateTimeRemaining()
 		self.tickSound:Play()
-		print("Lobby timer " .. tostring(timerId) .. "tick!")
+		print("Lobby timer " .. tostring(timerId) .. " tick!")
 	end
 end
 

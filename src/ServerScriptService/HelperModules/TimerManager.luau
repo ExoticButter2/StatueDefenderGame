@@ -1,9 +1,5 @@
 local serverScriptService = game:GetService("ServerScriptService")
-local serverStorage = game:GetService("ServerStorage")
 
-local eventsFolder: Folder = serverStorage:FindFirstChild("Events")
-
-local timerTickEvent: BindableEvent = eventsFolder:FindFirstChild("TimerTick")
 local timerClass = require(serverScriptService.HelperModules.TimerModuleClass)
 
 local TimerManager = {}
