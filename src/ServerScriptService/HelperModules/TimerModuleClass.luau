@@ -10,7 +10,7 @@ local timerTickEvent: BindableEvent = timerEventsFolder:FindFirstChild("TimerTic
 local TimerModule = {}
 
 TimerModule.defaultSpeed = 1
-TimerModule.defaultDuration = 60
+TimerModule.defaultDuration = 4
 
 local paused: boolean = false
 
@@ -18,8 +18,10 @@ export type Timer = typeof(setmetatable({} :: {
 	timerSpeed: number,
 	prePauseSpeed: number,
 	duration: number,
-	timeLeft: number,
+	timeRemaining: number,
 	id: number,
+	paused: boolean,
+	timerEnabled: boolean,
 }))
 
 function TimerModule.new(timerSpeed: number?, duration: number?, id: number): Timer
@@ -32,22 +34,29 @@ function TimerModule.new(timerSpeed: number?, duration: number?, id: number): Ti
 	self.paused = paused
 	self.timerEnabled = false
 
-	timerStartEvent.Event:Connect(self.OnTimerStart)
-	timerTickEvent.Event:Connect(self.OnTimerTick)
-	timerFinishedEvent.Event:Connect(self.OnTimerFinish)
+	print("Timer duration: " .. self.timeRemaining)
+	timerTickEvent.Event:Connect(function(timerId)
+		self:OnTimerTick(timerId)
+	end)
+	timerStartEvent.Event:Connect(function(timerId)
+		self:OnTimerStart(timerId)
+	end)
+	timerFinishedEvent.Event:Connect(function(timerId)
+		self:OnTimerFinish(timerId)
+	end)
 
 	return self
 end
 
-function TimerModule:OnTimerStart()
+function TimerModule:OnTimerStart(timerId: number)
 	print("Timer started")
 end
 
-function TimerModule:OnTimerTick()
+function TimerModule:OnTimerTick(timerId: number)
 	print("Timer tick")
 end
 
-function TimerModule:OnTimerFinish()
+function TimerModule:OnTimerFinish(timerId: number)
 	print("Timer finished")
 end
 
@@ -56,6 +65,7 @@ function TimerModule:StartTimer() --starts time ticking
 	local timeElapsed = 0
 
 	timerStartEvent:Fire()
+	print("Timer duration: " .. self.duration)
 
 	print("Started timer!")
 	while timeElapsed < self.duration and self.timerEnabled do
@@ -66,13 +76,14 @@ function TimerModule:StartTimer() --starts time ticking
 
 		timeElapsed += 1
 		self.timeRemaining = self.duration - timeElapsed --tick
+		print("Time remaining: " .. self.timeRemaining)
 		timerTickEvent:Fire(self.id)
 
 		task.wait(1 / self.timerSpeed)
 	end
 
 	if self.timerEnabled then
-		timerFinishedEvent:Fire(self)
+		timerFinishedEvent:Fire(self.id)
 	end
 end
 
@@ -93,10 +104,12 @@ end
 function TimerModule:ChangeTimerSpeed(newSpeed: number)
 	self.timerSpeed = newSpeed
 	self.prePauseSpeed = newSpeed --to prevent resuming resetting new speed
+	print("Changed timer speed")
 end
 
 function TimerModule:ChangeTimerDuration(newDuration: number)
 	self.duration = newDuration
+	print("Changed timer duration")
 end
 
 return TimerModule

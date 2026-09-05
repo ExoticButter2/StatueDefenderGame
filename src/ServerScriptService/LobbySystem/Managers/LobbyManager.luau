@@ -82,7 +82,6 @@ local function CreateLobby(lobbyModel: Model): lobbyClass.Lobby
 
 	lobbyId += 1
 	print("Created lobby!")
-
 	return lobbyClassInstance
 end
 
@@ -114,6 +113,25 @@ function LobbyManager.CloseLobby(closingLobbyId: number)
 	end
 
 	lobby:CloseLobby()
+end
+
+function LobbyManager.OnLobbyTimerFinish(timerId: number)
+	local lobbyId: number = timerManager.FindLobbyIdFromTimerId(timerId)
+
+	if not lobbyId then
+		warn("No lobby id found from timer id")
+		return
+	end
+
+	local lobby: lobbyClass.Lobby = LobbyManager.FindLobby(lobbyId)
+
+	if not lobby then
+		warn("No lobby found from lobby id")
+		return
+	end
+
+	lobby:TeleportAllPlayersToPlace() --finally teleport everyone away
+	print("Teleporting all players to place..")
 end
 
 function LobbyManager.StartLobby(startingLobbyId: number, lobbySettingsArgs: {})

@@ -6,6 +6,8 @@ local playerGui = players.LocalPlayer:WaitForChild("PlayerGui")
 local eventsFolder = replicatedStorage:WaitForChild("Events")
 local lobbyEventsFolder = eventsFolder:WaitForChild("Lobby")
 
+local onTeleportEvent: RemoteEvent = lobbyEventsFolder:WaitForChild("OnPlayerTeleport")
+
 local lobbyExitRequestEvent: RemoteEvent = lobbyEventsFolder:WaitForChild("LobbyExitRequest")
 
 local lobbyUIFolder: Folder = playerGui:WaitForChild("LobbyUI")
@@ -30,8 +32,13 @@ local function OnExitButtonPress()
 	print("Exit button pressed")
 end
 
+local function OnTeleport()
+	lobbyPlayerUIHandler.DisablePlayerUI()
+end
+
 function lobbyPlayerUIHandler.Initialize()
 	exitButton.MouseButton1Click:Connect(OnExitButtonPress)
+	onTeleportEvent.OnClientEvent:Connect(OnTeleport)
 end
 
 return lobbyPlayerUIHandler

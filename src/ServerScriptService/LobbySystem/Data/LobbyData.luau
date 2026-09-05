@@ -11,6 +11,8 @@ LobbyData.minPlayerLimit = 1
 
 LobbyData.defaultPlayerLimit = 4
 
+LobbyData.teleportWaitTime = 4
+
 LobbyData.defaultFriendsOnly = false
 
 LobbyData.touchPartName = "TouchPart"
@@ -18,11 +20,10 @@ LobbyData.enterPartName = "EnterPart"
 LobbyData.exitPartName = "ExitPart"
 
 LobbyData.defaultTeleportPlaceId = 138540525852189
-LobbyData.defaultDuration = 30
 
 export type LobbyData = typeof(setmetatable({} :: {
 	playerLimit: number,
-	friendsOnly: boolean,
+	args: {},
 	hostId: number,
 	teleportPlaceId: number,
 	lobbyId: number,
@@ -51,7 +52,10 @@ function LobbyData.new(
 	local self = setmetatable({}, { __index = LobbyData })
 
 	self.playerLimit = playerLimit or LobbyData.defaultPlayerLimit
-	self.friendsOnly = friendsOnly
+	self.args = {
+		["friendsOnly"] = friendsOnly or LobbyData.defaultFriendsOnly,
+		["playerLimit"] = playerLimit or LobbyData.defaultPlayerLimit,
+	}
 	self.hostId = nil
 	self.teleportPlaceId = teleportPlaceId or LobbyData.defaultTeleportPlaceId
 	self.lobbyId = lobbyId
@@ -65,8 +69,6 @@ function LobbyData.new(
 
 	self.timer = timer
 	self.timerDisplay = timerDisplay
-
-	self.lobbyDuration = LobbyData.defaultDuration
 
 	return self
 end

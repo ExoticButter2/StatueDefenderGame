@@ -1,4 +1,5 @@
 local replicatedStorage = game:GetService("ReplicatedStorage")
+local starterPlayer = game:GetService("StarterPlayer")
 local players = game:GetService("Players")
 
 local eventsFolder: Folder = replicatedStorage:WaitForChild("Events")
@@ -15,16 +16,19 @@ local hostGuiStartFrame: Frame = hostGuiBackgroundFrame:WaitForChild("StartFrame
 
 local lobbyStartButton: TextButton = hostGuiStartFrame:WaitForChild("LobbyStartButton")
 
-local lobbyHostUIHandler = {}
+local lobbyHostUIHandler =
+	require(starterPlayer:WaitForChild("StarterPlayerScripts"):WaitForChild("UIHandlers").LobbyHostUIHandler)
 
-function lobbyHostUIHandler.EnableHostUI()
-	hostGui.Enabled = true
-	print("Enabled host ui")
+local LobbyHostUIStartHandler = {}
+
+local function RequestLobbyStart()
+	lobbyStartRequest:FireServer()
+	lobbyHostUIHandler.DisableHostUI()
+	print("Requested lobby start")
 end
 
-function lobbyHostUIHandler.DisableHostUI()
-	hostGui.Enabled = false
-	print("Disabled host ui")
+function LobbyHostUIStartHandler.Initialize()
+	lobbyStartButton.MouseButton1Click:Connect(RequestLobbyStart)
 end
 
-return lobbyHostUIHandler
+return LobbyHostUIStartHandler

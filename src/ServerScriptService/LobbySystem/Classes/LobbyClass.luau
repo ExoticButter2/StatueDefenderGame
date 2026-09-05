@@ -17,7 +17,7 @@ local lobbyEventsFolderServer: Folder = eventsFolderServer:FindFirstChild("Lobby
 local lobbyHostJoinEvent: RemoteEvent = lobbyEventsFolderShared:FindFirstChild("OnLobbyHostJoin")
 local lobbyHostLeaveEvent: RemoteEvent = lobbyEventsFolderShared:FindFirstChild("OnLobbyHostLeave")
 
-local lobbyStartEvent: RemoteEvent = lobbyEventsFolderShared:FindFirstChild("LobbyStartRequest")
+local onPlayerTeleportEvent: RemoteEvent = lobbyEventsFolderShared:FindFirstChild("OnPlayerTeleport")
 
 local lobbyPlayerJoinRemoteEvent: RemoteEvent = lobbyEventsFolderShared:FindFirstChild("OnLobbyPlayerJoin")
 local lobbyPlayerLeaveRemoteEvent: RemoteEvent = lobbyEventsFolderShared:FindFirstChild("OnLobbyPlayerLeave")
@@ -35,29 +35,21 @@ export type Lobby = typeof(setmetatable({} :: {
 	lobbyData: lobbyDataModule.LobbyData,
 }))
 
+function LobbyClass:ResetLobby()
+	self.lobbyData.players = {}
+	self.lobbyData.friendsOnly = lobbyDataModule.defaultFriendsOnly
+	self.lobbyData.playerLimit = lobbyDataModule.defaultPlayerLimit
+	self.lobbyData.teleportPlaceId = lobbyDataModule.defaultTeleportPlaceId
+
+	print("Reset lobby: " .. self.lobbyData.lobbyId)
+end
+
 function LobbyClass:StartLobby()
-	--lobbyStartEvent:FireAllClients(self.lobbyData.lobbyId)
-	print("Start lobby in lobby class called")
-	if not self.lobbyData then
-		warn("Lobby data for lobby missing")
-		return
-	end
-
-	if not self.lobbyData.lobbyDuration then
-		warn("Lobby duration missing")
-		return
-	end
-
-	if not self.lobbyData.timer then
-		warn("Lobby timer missing")
-		return
-	end
-
-	self.lobbyData.timer.duration = self.lobbyData.lobbyDuration
-	print("Start timer function called in lobby class")
 	task.spawn(function()
 		self.lobbyData.timer:StartTimer()
 	end)
+
+	self:OpenLobby()
 
 	print("Started lobby from lobby class")
 end
@@ -85,10 +77,10 @@ end
 local function ValidatePlayerWithConfig(player: Player, self: Lobby)
 	local lobbyData = self.lobbyData
 
-	if lobbyData.friendsOnly and not player:IsFriendsWithAsync(lobbyData.hostId) then
+	if lobbyData.args["friendsOnly"] and not player:IsFriendsWithAsync(lobbyData.hostId) then
 		return false
 	end
-	if #lobbyData.players >= lobbyData.playerLimit then
+	if #lobbyData.players >= lobbyData.args["playerLimit"] then
 		return false
 	end
 	if table.find(lobbyData.players, player.UserId) then
@@ -251,6 +243,10 @@ function LobbyClass:RemoveAllPlayers()
 end
 
 function LobbyClass:TeleportAllPlayersToPlace()
+	for _, playerId in ipairs(self.lobbyData.players) do
+		onPlayerTeleportEvent:FireClient(players:GetPlayerByUserId(playerId))
+	end
+
 	local placeId = self.lobbyData.teleportPlaceId
 	local privateServerId = teleportService:ReserveServerAsync(placeId)
 
@@ -258,6 +254,9 @@ function LobbyClass:TeleportAllPlayersToPlace()
 	teleportOptions.ReservedServerAccessCode = privateServerId
 
 	teleportService:TeleportAsync(placeId, self.lobbyData.players, teleportOptions)
+
+	task.wait(lobbyDataModule.teleportWaitTime)
+	self:ResetLobby()
 end
 
 return LobbyClass

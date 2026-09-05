@@ -5,12 +5,12 @@ local uiHandlersFolder = starterPlayerScripts:FindFirstChild("UIHandlers")
 
 local lobbyEventHandler = require(handlersFolder.LobbyClientEventHandler)
 local lobbyPlayerUIHandler = require(uiHandlersFolder.LobbyPlayerUIHandler)
-local lobbyHostUIHandler = require(uiHandlersFolder.LobbyHostUIHandler)
+local lobbyPlayerUIStartHandler = require(uiHandlersFolder.LobbyHostUIStartHandler)
 
 local function Initialize()
 	lobbyEventHandler.Initialize()
 	lobbyPlayerUIHandler.Initialize()
-	lobbyHostUIHandler.Initialize()
+	lobbyPlayerUIStartHandler.Initialize()
 end
 
 Initialize()

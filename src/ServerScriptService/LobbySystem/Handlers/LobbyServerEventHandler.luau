@@ -4,6 +4,7 @@ local replicatedStorage = game:GetService("ReplicatedStorage")
 
 local eventsFolderServer: Folder = serverStorage:FindFirstChild("Events")
 local lobbyEventsFolderServer: Folder = eventsFolderServer:FindFirstChild("Lobby")
+local timerEventsFolderServer: Folder = eventsFolderServer:FindFirstChild("Timer")
 
 local eventsFolderClient: Folder = replicatedStorage:FindFirstChild("Events")
 local lobbyEventsFolderClient: Folder = eventsFolderClient:FindFirstChild("Lobby")
@@ -11,8 +12,10 @@ local lobbyEventsFolderClient: Folder = eventsFolderClient:FindFirstChild("Lobby
 local lobbySystemFolder: Folder = serverScriptService:FindFirstChild("LobbySystem")
 
 local managersFolder: Folder = lobbySystemFolder:FindFirstChild("Managers")
+local classesFolder: Folder = lobbySystemFolder:FindFirstChild("Classes")
 
 local lobbyManager = require(managersFolder.LobbyManager)
+local lobbyClass = require(classesFolder.LobbyClass)
 
 local lobbyPlayerJoinEvent: BindableEvent = lobbyEventsFolderServer:FindFirstChild("LobbyPlayerJoinServer")
 local lobbyPlayerLeaveEvent: BindableEvent = lobbyEventsFolderServer:FindFirstChild("LobbyPlayerLeaveServer")
@@ -22,6 +25,8 @@ local lobbyHostLeaveEvent: BindableEvent = lobbyEventsFolderServer:FindFirstChil
 local lobbyExitRequestEvent: RemoteEvent = lobbyEventsFolderClient:FindFirstChild("LobbyExitRequest")
 
 local lobbyStartRequest: RemoteEvent = lobbyEventsFolderClient:FindFirstChild("LobbyStartRequest")
+
+local timerFinishEvent: BindableEvent = timerEventsFolderServer:FindFirstChild("TimerFinish")
 
 local LobbyServerEventHandler = {}
 
@@ -56,6 +61,10 @@ local function OnLobbyStartRequest(player: Player)
 	lobbyManager.StartLobbyFromPlayerId(player.UserId)
 end
 
+local function OnLobbyTimerFinish(timerId: number)
+	lobbyManager.OnLobbyTimerFinish(timerId)
+end
+
 function LobbyServerEventHandler.Initialize()
 	lobbyPlayerJoinEvent.Event:Connect(OnLobbyPlayerJoin)
 	lobbyPlayerLeaveEvent.Event:Connect(OnLobbyPlayerLeave)
@@ -63,6 +72,8 @@ function LobbyServerEventHandler.Initialize()
 	lobbyHostJoinEvent.Event:Connect(OnHostLobbyJoin)
 	lobbyHostLeaveEvent.Event:Connect(OnHostLobbyLeave)
 	lobbyStartRequest.OnServerEvent:Connect(OnLobbyStartRequest)
+
+	timerFinishEvent.Event:Connect(OnLobbyTimerFinish)
 end
 
 return LobbyServerEventHandler
