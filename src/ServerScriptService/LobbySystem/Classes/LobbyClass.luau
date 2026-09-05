@@ -256,7 +256,17 @@ function LobbyClass:TeleportAllPlayersToPlace()
 	local teleportOptions = Instance.new("TeleportOptions")
 	teleportOptions.ReservedServerAccessCode = privateServerId
 
-	teleportService:TeleportAsync(placeId, self.lobbyData.players, teleportOptions)
+	local playerInstanceTable = {}
+
+	for _, playerId in ipairs(self.lobbyData.players) do
+		local player = players:GetPlayerByUserId(playerId)
+
+		if player then
+			table.insert(playerInstanceTable, player)
+		end
+	end
+
+	teleportService:TeleportAsync(placeId, playerInstanceTable, teleportOptions)
 
 	task.wait(lobbyDataModule.teleportWaitTime)
 	self:ResetLobby()
