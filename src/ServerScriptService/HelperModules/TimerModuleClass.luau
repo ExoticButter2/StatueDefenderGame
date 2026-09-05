@@ -27,10 +27,9 @@ function TimerModule.new(timerSpeed: number?, duration: number?, id: number): Ti
 
 	self.timerSpeed = timerSpeed or TimerModule.defaultSpeed
 	self.duration = duration or TimerModule.defaultDuration
-	self.timeLeft = self.duration --for displaying time text
+	self.timeRemaining = self.duration --for displaying time text
 	self.id = id
 	self.paused = paused
-	self.timeRemaining = TimerModule.defaultDuration
 	self.timerEnabled = false
 
 	timerStartEvent.Event:Connect(self.OnTimerStart)
@@ -59,24 +58,22 @@ function TimerModule:StartTimer() --starts time ticking
 	timerStartEvent:Fire()
 
 	print("Started timer!")
-	while timeElapsed < self.duration do
+	while timeElapsed < self.duration and self.timerEnabled do
 		if self.paused then --wait if paused
 			task.wait(0.5)
 			continue
 		end
 
-		task.wait(1 / self.timerSpeed)
-
-		if not self.timerEnabled then
-			return
-		end
-
 		timeElapsed += 1
-		self.timeLeft = self.duration - timeElapsed --tick
+		self.timeRemaining = self.duration - timeElapsed --tick
 		timerTickEvent:Fire(self.id)
+
+		task.wait(1 / self.timerSpeed)
 	end
 
-	timerFinishedEvent:Fire(self)
+	if self.timerEnabled then
+		timerFinishedEvent:Fire(self)
+	end
 end
 
 function TimerModule:PauseTimer()

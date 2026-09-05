@@ -14,7 +14,7 @@ local timerIdToTimerDictionary = {}
 local timerIdToLobby = {}
 
 function TimerManager.CreateTimer()
-	local timer = timerClass.new()
+	local timer = timerClass.new(nil, 60, id)
 
 	timerIdToTimerDictionary[id] = timer
 	id += 1
@@ -26,7 +26,7 @@ function TimerManager.CreateLobbyTimer(lobby)
 	local timer = timerClass.new()
 
 	timerIdToTimerDictionary[id] = timer
-	timerIdToLobby[id] = lobby
+	--timerIdToLobby[id] = lobby
 	id += 1
 
 	return id - 1
@@ -43,16 +43,16 @@ function TimerManager.FindTimer(timerId: number)
 	return timer
 end
 
-function TimerManager.UpdateLobbyTimerDisplay(timerId: number)
-	local lobby = TimerManager.timerIdToLobby[timerId]
+-- function TimerManager.UpdateLobbyTimerDisplay(timerId: number)
+-- 	local lobby = TimerManager.timerIdToLobby[timerId]
 
-	if not lobby then
-		warn("No lobby found for timer")
-		return
-	end
+-- 	if not lobby then
+-- 		warn("No lobby found for timer")
+-- 		return
+-- 	end
 
-	lobby.lobbyData.timerDisplay:UpdateTimerDisplay()
-	print("Updated lobby timer display")
-end
+-- 	lobby.lobbyData.timerDisplay:UpdateTimerDisplay()
+-- 	print("Updated lobby timer display")
+-- end
 
 return TimerManager

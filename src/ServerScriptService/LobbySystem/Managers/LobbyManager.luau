@@ -19,6 +19,7 @@ local touchPartName = "TouchPart"
 local enterPartName = "EnterPart"
 local exitPartName = "ExitPart"
 local timeTextLabelName = "TimeTextLabel"
+local timeTickSoundName = "TickSound"
 
 LobbyManager.Lobbies = {}
 
@@ -31,12 +32,14 @@ local function CreateLobby(lobbyModel: Model): lobbyClass.Lobby
 	local enterPart
 	local exitPart
 	local timeTextLabel
+	local timeTickSound
 
 	if lobbyModel:IsA("Model") then
 		touchPart = lobbyModel:FindFirstChild(touchPartName)
 		enterPart = lobbyModel:FindFirstChild(enterPartName)
 		exitPart = lobbyModel:FindFirstChild(exitPartName)
 		timeTextLabel = lobbyModel:FindFirstChild(timeTextLabelName, true)
+		timeTickSound = lobbyModel:FindFirstChild(timeTickSoundName, true)
 	end
 
 	if not touchPart then
@@ -59,10 +62,16 @@ local function CreateLobby(lobbyModel: Model): lobbyClass.Lobby
 		return
 	end
 
+	if not timeTickSound then
+		warn("Add sound named " .. timeTickSoundName .. " to the lobby model: " .. lobbyModel.Name)
+		return
+	end
+
 	local timerInstanceId: number = timerManager.CreateLobbyTimer(lobbyId)
 	local timerInstance: timerModule.Timer = timerManager.FindTimer(timerInstanceId)
 
-	local timerDisplayInstance: timerDisplayModule.TimerDisplay = timerDisplayModule.new(timerInstance, timeTextLabel)
+	local timerDisplayInstance: timerDisplayModule.TimerDisplay =
+		timerDisplayModule.new(timerInstance, timeTextLabel, timeTickSound)
 
 	local lobbyDataInstance: lobbyData.LobbyData =
 		lobbyData.new(nil, nil, nil, lobbyId, touchPart, enterPart, exitPart, nil, timerInstance, timerDisplayInstance)
@@ -115,7 +124,7 @@ function LobbyManager.StartLobby(startingLobbyId: number, lobbySettingsArgs: {})
 		return
 	end
 
-	lobby:StartLobby()
+	lobby:StartLobby(startingLobbyId, {})
 	print("Started lobby")
 end
 
@@ -135,13 +144,10 @@ end
 function LobbyManager.FindLobby(id: number): lobbyClass.Lobby --returns lobby class with LobbyID
 	local lobby = LobbyManager.Lobbies[id] --search global database
 
-	print("Finding lobby with lobby id: " .. id)
 	if lobby then
-		print("Found lobby with lobby id: " .. id)
 		return lobby
 	end
 
-	warn("No lobby found with lobby id: " .. id)
 	return nil
 end
 

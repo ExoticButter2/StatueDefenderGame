@@ -37,8 +37,7 @@ export type Lobby = typeof(setmetatable({} :: {
 
 function LobbyClass:StartLobby()
 	--lobbyStartEvent:FireAllClients(self.lobbyData.lobbyId)
-	print("Started lobby")
-
+	print("Start lobby in lobby class called")
 	if not self.lobbyData then
 		warn("Lobby data for lobby missing")
 		return
@@ -53,8 +52,14 @@ function LobbyClass:StartLobby()
 		warn("Lobby timer missing")
 		return
 	end
+
 	self.lobbyData.timer.duration = self.lobbyData.lobbyDuration
-	self.lobbyData.timer:StartTimer()
+	print("Start timer function called in lobby class")
+	task.spawn(function()
+		self.lobbyData.timer:StartTimer()
+	end)
+
+	print("Started lobby from lobby class")
 end
 
 -- function LobbyClass:ChangeLobbySettings(args: {})--changes lobby settings args
