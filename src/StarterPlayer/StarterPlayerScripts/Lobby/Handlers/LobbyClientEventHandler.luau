@@ -1,8 +1,10 @@
+--!strict
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local starterPlayer = game:GetService("StarterPlayer")
 
 local starterPlayerScripts = starterPlayer:WaitForChild("StarterPlayerScripts")
-local uiHandlersFolder: Folder = starterPlayerScripts:WaitForChild("UIHandlers")
+local lobbyScriptsFolder: Folder = starterPlayerScripts:WaitForChild("Lobby")
+local uiHandlersFolder: Folder = lobbyScriptsFolder:WaitForChild("UIHandlers")
 
 local eventsFolder: Folder = replicatedStorage:WaitForChild("Events")
 local lobbyEventsFolder: Folder = eventsFolder:WaitForChild("Lobby")

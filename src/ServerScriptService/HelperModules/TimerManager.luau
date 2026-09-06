@@ -1,3 +1,4 @@
+--!strict
 local serverScriptService = game:GetService("ServerScriptService")
 
 local timerClass = require(serverScriptService.HelperModules.TimerModuleClass)

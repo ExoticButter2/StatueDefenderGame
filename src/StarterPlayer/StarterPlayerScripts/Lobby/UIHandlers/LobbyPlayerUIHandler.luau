@@ -1,7 +1,12 @@
+--!strict
 local replicatedStorage = game:GetService("ReplicatedStorage")
-local players = game:GetService("Players")
+local starterPlayer = game:GetService("StarterPlayer")
 
-local playerGui = players.LocalPlayer:WaitForChild("PlayerGui")
+local starterPlayerScripts: Folder = starterPlayer:WaitForChild("StarterPlayerScripts")
+local lobbyUIScriptsFolder: Folder = starterPlayerScripts:WaitForChild("Lobby")
+local lobbyUIDataFolder: Folder = lobbyUIScriptsFolder:WaitForChild("LobbyUIData")
+
+local lobbyUIData = require(lobbyUIDataFolder.LobbyUIDatabase)
 
 local eventsFolder = replicatedStorage:WaitForChild("Events")
 local lobbyEventsFolder = eventsFolder:WaitForChild("Lobby")
@@ -10,20 +15,17 @@ local onTeleportEvent: RemoteEvent = lobbyEventsFolder:WaitForChild("OnPlayerTel
 
 local lobbyExitRequestEvent: RemoteEvent = lobbyEventsFolder:WaitForChild("LobbyExitRequest")
 
-local lobbyUIFolder: Folder = playerGui:WaitForChild("LobbyUI")
-
-local exitButtonGui: SurfaceGui = lobbyUIFolder:WaitForChild("PlayerGui")
-local exitButton: TextButton = exitButtonGui:WaitForChild("Frame"):WaitForChild("ExitButton")
+local exitButtonClickEvent: RBXScriptConnection = nil
 
 local lobbyPlayerUIHandler = {}
 
 function lobbyPlayerUIHandler.EnablePlayerUI()
-	exitButtonGui.Enabled = true
+	lobbyUIData.lobbyPlayerGui.Enabled = true
 	print("Enabled Player lobby UI")
 end
 
 function lobbyPlayerUIHandler.DisablePlayerUI()
-	exitButtonGui.Enabled = false
+	lobbyUIData.lobbyPlayerGui.Enabled = false
 	print("Disabled Player lobby UI")
 end
 
@@ -36,8 +38,16 @@ local function OnTeleport()
 	lobbyPlayerUIHandler.DisablePlayerUI()
 end
 
+function lobbyPlayerUIHandler.UpdateUIEvents()
+	if exitButtonClickEvent then
+		exitButtonClickEvent:Disconnect()
+	end
+
+	exitButtonClickEvent = lobbyUIData.lobbyExitButton.MouseButton1Click:Connect(OnExitButtonPress)
+end
+
 function lobbyPlayerUIHandler.Initialize()
-	exitButton.MouseButton1Click:Connect(OnExitButtonPress)
+	lobbyPlayerUIHandler.UpdateUIEvents()
 	onTeleportEvent.OnClientEvent:Connect(OnTeleport)
 end
 

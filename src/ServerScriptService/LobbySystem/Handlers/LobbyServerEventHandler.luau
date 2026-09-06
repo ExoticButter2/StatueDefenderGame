@@ -1,3 +1,4 @@
+--!strict
 local serverStorage = game:GetService("ServerStorage")
 local serverScriptService = game:GetService("ServerScriptService")
 local replicatedStorage = game:GetService("ReplicatedStorage")

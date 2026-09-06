@@ -1,3 +1,4 @@
+--!strict
 local serverStorage = game:GetService("ServerStorage")
 local eventsFolder = serverStorage:FindFirstChild("Events")
 
@@ -10,7 +11,7 @@ local timerTickEvent: BindableEvent = timerEventsFolder:FindFirstChild("TimerTic
 local TimerModule = {}
 
 TimerModule.defaultSpeed = 1
-TimerModule.defaultDuration = 4
+TimerModule.defaultDuration = 30
 
 local paused: boolean = false
 

@@ -1,3 +1,4 @@
+--!strict
 local serverScriptService = game:GetService("ServerScriptService")
 
 local lobbySystemFolder: Folder = serverScriptService:FindFirstChild("LobbySystem")
@@ -73,8 +74,11 @@ local function CreateLobby(lobbyModel: Model): lobbyClass.Lobby
 	local timerDisplayInstance: timerDisplayModule.TimerDisplay =
 		timerDisplayModule.new(timerInstance, timeTextLabel, timeTickSound)
 
-	local lobbyDataInstance: lobbyData.LobbyData =
-		lobbyData.new(nil, nil, nil, lobbyId, touchPart, enterPart, exitPart, nil, timerInstance, timerDisplayInstance)
+	local lobbyDataInstance: lobbyData.LobbyData = lobbyData.new({
+		["friendsOnly"] = lobbyData.friendsOnly,
+		["playerLimit"] = lobbyData.defaultPlayerLimit,
+		["teleportPlaceId"] = lobbyData.defaultTeleportPlaceId,
+	}, lobbyId, touchPart, enterPart, exitPart, true, timerInstance, timerDisplayInstance)
 
 	local lobbyClassInstance: lobbyClass.Lobby = lobbyClass.new(lobbyDataInstance)
 
@@ -146,7 +150,7 @@ function LobbyManager.StartLobby(startingLobbyId: number, lobbySettingsArgs: {})
 	print("Started lobby")
 end
 
-function LobbyManager.StartLobbyFromPlayerId(playerId: number)
+function LobbyManager.StartLobbyFromPlayerId(playerId: number, lobbyArgs: {})
 	local startingLobbyId: number = LobbyManager.FindLobbyIdFromPlayerId(playerId)
 
 	if not startingLobbyId then
@@ -154,7 +158,7 @@ function LobbyManager.StartLobbyFromPlayerId(playerId: number)
 		return
 	end
 
-	LobbyManager.StartLobby(startingLobbyId, {})
+	LobbyManager.StartLobby(startingLobbyId, lobbyArgs)
 end
 
 --HELPER MODULES

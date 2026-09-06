@@ -1,3 +1,4 @@
+--!strict
 local players = game:GetService("Players")
 local serverScriptService = game:GetService("ServerScriptService")
 local teleportService = game:GetService("TeleportService")
@@ -30,6 +31,7 @@ local LobbyClass = {}
 export type Lobby = typeof(setmetatable({} :: {
 	touchConnection: RBXScriptConnection,
 	playerLeaveConnection: RBXScriptConnection,
+	playerResetConnection: RBXScriptConnection,
 	lobbyData: lobbyDataModule.LobbyData,
 }))
 
@@ -39,7 +41,7 @@ function LobbyClass:ResetLobby()
 	self.lobbyData.playerLimit = lobbyDataModule.defaultPlayerLimit
 	self.lobbyData.teleportPlaceId = lobbyDataModule.defaultTeleportPlaceId
 
-	print("Reset lobby: " .. self.lobbyData.lobbyId)
+	print("Reset lobby " .. self.lobbyData.lobbyId)
 end
 
 function LobbyClass:StartLobby(args)
@@ -65,6 +67,11 @@ function LobbyClass:ChangeLobbySettings(args: {}) --changes lobby settings args
 
 		lobbyData.args[setting] = v
 	end
+
+	local playerLimit = lobbyData.args["playerLimit"]
+
+	lobbyData.args["playerLimit"] =
+		math.clamp(playerLimit, lobbyDataModule.minPlayerLimit, lobbyDataModule.maxPlayerLimit) --prevent cheaters going beyond limits
 end
 
 function LobbyClass:OpenLobby()
@@ -83,10 +90,10 @@ local function ValidatePlayerWithConfig(player: Player, self: Lobby)
 	if lobbyData.args["friendsOnly"] and not player:IsFriendsWithAsync(lobbyData.hostId) then
 		return false
 	end
-	if #lobbyData.players >= lobbyData.args["playerLimit"] then
+	if #lobbyData.playerIds >= lobbyData.args["playerLimit"] then
 		return false
 	end
-	if table.find(lobbyData.players, player.UserId) then
+	if table.find(lobbyData.playerIds, player.UserId) then
 		return false
 	end
 	if not lobbyData.lobbyOpen then
@@ -110,21 +117,20 @@ end
 local function RemoveHost(self: Lobby, player: Player)
 	local lobbyData = self.lobbyData
 
-	local hostIndex = table.find(lobbyData.players, lobbyData.hostId)
+	local hostIndex = table.find(lobbyData.playerIds, lobbyData.hostId)
 
 	if not hostIndex then
 		warn("No host to remove!")
 		return
 	end
 
-	lobbyData.players[hostIndex] = nil
+	lobbyData.playerIds[hostIndex] = nil
 	lobbyData.hostId = nil
 
 	lobbyHostLeaveEvent:FireClient(player, lobbyData.lobbyId)
 	lobbyHostLeaveBindableEvent:Fire(lobbyData.lobbyId)
 
 	if not player.Character then
-		warn("No player character found when removing player")
 		return
 	end
 
@@ -135,7 +141,7 @@ local function AttemptJoin(otherPart: BasePart, self: Lobby) --validate before a
 	local player = players:GetPlayerFromCharacter(otherPart.Parent)
 
 	if player then
-		if #self.lobbyData.players == 0 then --if host, dont validate
+		if #self.lobbyData.playerIds == 0 then --if host, dont validate
 			AddHost(player, self)
 			return
 		end
@@ -144,14 +150,28 @@ local function AttemptJoin(otherPart: BasePart, self: Lobby) --validate before a
 			self:AddPlayer(player)
 		end
 	end
-
-	print("Part touched!")
 end
 
 local function OnPlayerLeave(player: Player, self: Lobby)
 	local playerId = player.UserId
 
-	if table.find(self.lobbyData.players, playerId) then
+	if table.find(self.lobbyData.playerIds, playerId) then
+		self:RemovePlayer(player)
+	end
+end
+
+local function OnPlayerReset(character: Model, self: Lobby)
+	print("Player reset!")
+	local player: Player = players:GetPlayerFromCharacter(character)
+
+	if not player then
+		warn("No player character found from reset")
+		return
+	end
+
+	local playerId: number = player.UserId
+
+	if table.find(self.lobbyData.playerIds, playerId) then
 		self:RemovePlayer(player)
 	end
 end
@@ -167,6 +187,12 @@ function LobbyClass.new(lobbyData: lobbyDataModule.LobbyData): Lobby
 
 	self.playerLeaveConnection = players.PlayerRemoving:Connect(function(player)
 		OnPlayerLeave(player, self)
+	end)
+
+	players.PlayerAdded:Connect(function(player)
+		player.CharacterAdded:Connect(function(character: Model)
+			OnPlayerReset(character, self)
+		end)
 	end)
 
 	self.hostId = self.lobbyData.hostId
@@ -190,12 +216,13 @@ end
 function LobbyClass:AddPlayer(player: Player) --all checks already performed
 	local lobbyData = self.lobbyData
 	local playerId = player.UserId
+	local playerIds = lobbyData.playerIds
 
 	print("Adding player..")
-	print("Players in lobby: " .. #lobbyData.players)
+	print("Players in lobby: " .. #playerIds)
 
-	if not table.find(lobbyData.players, playerId) then
-		table.insert(lobbyData.players, playerId)
+	if not table.find(playerIds, playerId) then
+		table.insert(playerIds, playerId)
 		player.Character:PivotTo(lobbyData.enterPart.CFrame)
 		print("Added " .. player.Name .. " to the lobby")
 	end
@@ -209,7 +236,7 @@ function LobbyClass:RemovePlayer(player: Player)
 	local playerId = player.UserId
 	local lobbyData = self.lobbyData
 
-	local playerIndex = table.find(lobbyData.players, playerId)
+	local playerIndex = table.find(lobbyData.playerIds, playerId)
 
 	if not playerIndex then
 		warn(player.Name .. " is not in the lobby")
@@ -221,11 +248,15 @@ function LobbyClass:RemovePlayer(player: Player)
 		self:RemoveAllPlayers()
 	end
 
-	table.remove(lobbyData.players, playerIndex)
+	table.remove(lobbyData.playerIds, playerIndex)
 	print("Removed " .. player.Name .. " from the lobby")
 
 	lobbyPlayerLeaveRemoteEvent:FireClient(player, lobbyData.lobbyId)
 	lobbyPlayerLeaveBindableEvent:Fire(player, lobbyData.lobbyId)
+
+	if #lobbyData.playerIds == 0 then
+		self:ResetLobby()
+	end
 
 	if not player.Character then
 		warn("No player character found when removing player")
@@ -236,7 +267,7 @@ function LobbyClass:RemovePlayer(player: Player)
 end
 
 function LobbyClass:RemoveAllPlayers()
-	for _, player in ipairs(self.lobbyData.players) do
+	for _, player in ipairs(self.lobbyData.playerIds) do
 		self:RemovePlayer(player)
 	end
 
@@ -246,11 +277,17 @@ function LobbyClass:RemoveAllPlayers()
 end
 
 function LobbyClass:TeleportAllPlayersToPlace()
-	for _, playerId in ipairs(self.lobbyData.players) do
+	for _, playerId in ipairs(self.lobbyData.playerIds) do
 		onPlayerTeleportEvent:FireClient(players:GetPlayerByUserId(playerId))
 	end
 
-	local placeId = self.lobbyData.teleportPlaceId
+	local placeId = self.lobbyData.args["teleportPlaceId"]
+
+	if not placeId then
+		warn("No place ID found in lobby args")
+		return
+	end
+
 	local privateServerId = teleportService:ReserveServerAsync(placeId)
 
 	local teleportOptions = Instance.new("TeleportOptions")
@@ -258,7 +295,7 @@ function LobbyClass:TeleportAllPlayersToPlace()
 
 	local playerInstanceTable = {}
 
-	for _, playerId in ipairs(self.lobbyData.players) do
+	for _, playerId in ipairs(self.lobbyData.playerIds) do
 		local player = players:GetPlayerByUserId(playerId)
 
 		if player then

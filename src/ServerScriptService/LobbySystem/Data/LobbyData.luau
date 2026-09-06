@@ -1,3 +1,4 @@
+--!strict
 local serverScriptService = game:GetService("ServerScriptService")
 local helperModulesFolder: Folder = serverScriptService:FindFirstChild("HelperModules")
 
@@ -22,25 +23,26 @@ LobbyData.exitPartName = "ExitPart"
 LobbyData.defaultTeleportPlaceId = 138540525852189
 
 export type LobbyData = typeof(setmetatable({} :: {
-	playerLimit: number,
-	args: {},
+	args: LobbyArgs,
 	hostId: number,
-	teleportPlaceId: number,
 	lobbyId: number,
-	players: {},
+	playerIds: { Player },
 	touchPart: BasePart,
 	enterPart: BasePart,
 	exitPart: BasePart,
 	lobbyOpen: boolean?,
 	timer: timerModule.Timer,
 	timerDisplay: timerDisplayModule.TimerDisplay,
-	lobbyDuration: number,
 }))
 
+export type LobbyArgs = {
+	["friendsOnly"]: boolean,
+	["playerLimit"]: number,
+	["teleportPlaceId"]: number,
+}
+
 function LobbyData.new(
-	playerLimit: number?,
-	friendsOnly: boolean?,
-	teleportPlaceId: number?,
+	args: LobbyArgs,
 	lobbyId: number,
 	touchPart: BasePart,
 	enterPart: BasePart,
@@ -51,15 +53,10 @@ function LobbyData.new(
 ): LobbyData
 	local self = setmetatable({}, { __index = LobbyData })
 
-	self.playerLimit = playerLimit or LobbyData.defaultPlayerLimit
-	self.args = {
-		["friendsOnly"] = friendsOnly or LobbyData.defaultFriendsOnly,
-		["playerLimit"] = playerLimit or LobbyData.defaultPlayerLimit,
-	}
+	self.args = args
 	self.hostId = nil
-	self.teleportPlaceId = teleportPlaceId or LobbyData.defaultTeleportPlaceId
 	self.lobbyId = lobbyId
-	self.players = {}
+	self.playerIds = {}
 
 	self.touchPart = touchPart
 	self.enterPart = enterPart
