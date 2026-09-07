@@ -176,7 +176,7 @@ function LobbyManager.StartLobby(startingLobbyId: number)
 	print("Started lobby")
 end
 
-function LobbyManager.StartLobbyFromPlayerId(playerId: number, lobbyArgs: {})
+function LobbyManager.StartLobbyFromPlayerId(playerId: number)
 	local startingLobbyId: number = LobbyManager.FindLobbyIdFromPlayerId(playerId)
 
 	if not startingLobbyId then
