@@ -8,6 +8,8 @@ local uiHandlersFolder: Folder = lobbyClientFolder:WaitForChild("UIHandlers")
 local lobbyUIDataFolder: Folder = lobbyClientFolder:WaitForChild("LobbyUIData")
 
 local lobbyEventHandler = require(handlersFolder.LobbyClientEventHandler)
+
+local lobbyUIEventHandler = require(uiHandlersFolder.LobbyUIEventHandler)
 local lobbyPlayerUIHandler = require(uiHandlersFolder.LobbyPlayerUIHandler)
 local lobbyPlayerUIStartHandler = require(uiHandlersFolder.LobbyHostUIStartHandler)
 local lobbyHostUIHandler = require(uiHandlersFolder.LobbyHostUIHandler)
@@ -15,6 +17,8 @@ local lobbyUIDatabase = require(lobbyUIDataFolder.LobbyUIDatabase)
 
 local function Initialize()
 	lobbyUIDatabase.Initialize() --ALWAYS INITIALIZE FIRST HERE
+
+	lobbyUIEventHandler.Initialize()
 
 	lobbyEventHandler.Initialize()
 	lobbyPlayerUIHandler.Initialize()

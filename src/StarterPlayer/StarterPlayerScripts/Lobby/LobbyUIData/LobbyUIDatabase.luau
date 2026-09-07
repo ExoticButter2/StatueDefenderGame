@@ -1,6 +1,7 @@
 --!strict
 local players = game:GetService("Players")
 local starterPlayer = game:GetService("StarterPlayer")
+local replicatedStorage = game:GetService("ReplicatedStorage")
 
 local starterPlayerScripts: Folder = starterPlayer:WaitForChild("StarterPlayerScripts")
 
@@ -9,6 +10,9 @@ local LobbyUIDatabase = {}
 LobbyUIDatabase.lobbyClientFolder = starterPlayerScripts:WaitForChild("Lobby")
 LobbyUIDatabase.handlersFolder = LobbyUIDatabase.lobbyClientFolder:WaitForChild("Handlers")
 LobbyUIDatabase.uiHandlersFolder = LobbyUIDatabase.lobbyClientFolder:WaitForChild("UIHandlers")
+
+LobbyUIDatabase.lobbyEventsFolder = replicatedStorage:WaitForChild("Events"):WaitForChild("Lobby")
+LobbyUIDatabase.changeLobbyArgsEvent = LobbyUIDatabase.lobbyEventsFolder:WaitForChild("ChangeLobbyArgs")
 
 function LobbyUIDatabase.UpdateUIVariables()
 	LobbyUIDatabase.playerGui = players.LocalPlayer:WaitForChild("PlayerGui")

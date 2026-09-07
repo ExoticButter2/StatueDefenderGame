@@ -5,6 +5,7 @@ local lobbySystemFolder: Folder = serverScriptService:FindFirstChild("LobbySyste
 
 local lobbyClass = require(lobbySystemFolder.Classes.LobbyClass)
 local lobbyData = require(lobbySystemFolder.Data.LobbyData)
+local lobbyArgsModule = require(lobbySystemFolder.Classes.LobbyArgs)
 
 local helperModulesFolder: Folder = serverScriptService:FindFirstChild("HelperModules")
 
@@ -74,11 +75,10 @@ local function CreateLobby(lobbyModel: Model): lobbyClass.Lobby
 	local timerDisplayInstance: timerDisplayModule.TimerDisplay =
 		timerDisplayModule.new(timerInstance, timeTextLabel, timeTickSound)
 
-	local lobbyDataInstance: lobbyData.LobbyData = lobbyData.new({
-		["friendsOnly"] = lobbyData.friendsOnly,
-		["playerLimit"] = lobbyData.defaultPlayerLimit,
-		["teleportPlaceId"] = lobbyData.defaultTeleportPlaceId,
-	}, lobbyId, touchPart, enterPart, exitPart, true, timerInstance, timerDisplayInstance)
+	local lobbyArgs: lobbyArgsModule.LobbyArgs = lobbyArgsModule.new()
+
+	local lobbyDataInstance: lobbyData.LobbyData =
+		lobbyData.new(lobbyArgs, lobbyId, touchPart, enterPart, exitPart, true, timerInstance, timerDisplayInstance)
 
 	local lobbyClassInstance: lobbyClass.Lobby = lobbyClass.new(lobbyDataInstance)
 
@@ -95,6 +95,32 @@ function LobbyManager.Initialize() --creates lobby functionality and enables lob
 	end
 
 	print("Initialized lobby manager")
+end
+
+function LobbyManager.ChangeLobbyArgs(argsToChange: {}, playerInLobby: Player)
+	if not playerInLobby or not playerInLobby:IsA("Player") then
+		warn("Player missing for event")
+		return
+	end
+
+	if #argsToChange == 0 or type(argsToChange) ~= "table" then
+		return
+	end
+
+	local playerLobbyId = LobbyManager.FindLobbyIdFromPlayerId(playerInLobby.UserId)
+
+	if not playerLobbyId then
+		return
+	end
+
+	local lobby = LobbyManager.FindLobby(playerLobbyId)
+
+	if not lobby then
+		return
+	end
+
+	lobby.lobbyData.args.ChangeArgs(argsToChange)
+	print("Successfully changed lobby args")
 end
 
 function LobbyManager.OpenLobby(openingLobbyId: number)
@@ -138,7 +164,7 @@ function LobbyManager.OnLobbyTimerFinish(timerId: number)
 	print("Teleporting all players to place..")
 end
 
-function LobbyManager.StartLobby(startingLobbyId: number, lobbySettingsArgs: {})
+function LobbyManager.StartLobby(startingLobbyId: number)
 	local lobby: lobbyClass.Lobby = LobbyManager.FindLobby(startingLobbyId)
 
 	if not lobby then
@@ -146,7 +172,7 @@ function LobbyManager.StartLobby(startingLobbyId: number, lobbySettingsArgs: {})
 		return
 	end
 
-	lobby:StartLobby(lobbySettingsArgs)
+	lobby:StartLobby()
 	print("Started lobby")
 end
 
@@ -158,7 +184,7 @@ function LobbyManager.StartLobbyFromPlayerId(playerId: number, lobbyArgs: {})
 		return
 	end
 
-	LobbyManager.StartLobby(startingLobbyId, lobbyArgs)
+	LobbyManager.StartLobby(startingLobbyId)
 end
 
 --HELPER MODULES
@@ -180,6 +206,7 @@ function LobbyManager.FindLobbyIdFromPlayerId(playerId: number): number --return
 		return playerLobbyId
 	end
 
+	warn("No lobby id found from player id")
 	return nil
 end
 

@@ -21,6 +21,8 @@ local lobbyPlayerLeaveEvent: BindableEvent = lobbyEventsFolderServer:FindFirstCh
 local lobbyHostJoinEvent: BindableEvent = lobbyEventsFolderServer:FindFirstChild("LobbyHostJoinServer")
 local lobbyHostLeaveEvent: BindableEvent = lobbyEventsFolderServer:FindFirstChild("LobbyHostLeaveServer")
 
+local changeLobbyArgs: RemoteEvent = lobbyEventsFolderClient:FindFirstChild("ChangeLobbyArgs")
+
 local lobbyExitRequestEvent: RemoteEvent = lobbyEventsFolderClient:FindFirstChild("LobbyExitRequest")
 
 local lobbyStartRequest: RemoteEvent = lobbyEventsFolderClient:FindFirstChild("LobbyStartRequest")
@@ -64,6 +66,11 @@ local function OnLobbyTimerFinish(timerId: number)
 	lobbyManager.OnLobbyTimerFinish(timerId)
 end
 
+local function OnChangeLobbyArgs(argsToChange: {}, player: Player)
+	lobbyManager.ChangeLobbyArgs(argsToChange, player)
+	print("Change lobby args event handling")
+end
+
 function LobbyServerEventHandler.Initialize()
 	lobbyPlayerJoinEvent.Event:Connect(OnLobbyPlayerJoin)
 	lobbyPlayerLeaveEvent.Event:Connect(OnLobbyPlayerLeave)
@@ -71,6 +78,8 @@ function LobbyServerEventHandler.Initialize()
 	lobbyHostJoinEvent.Event:Connect(OnHostLobbyJoin)
 	lobbyHostLeaveEvent.Event:Connect(OnHostLobbyLeave)
 	lobbyStartRequest.OnServerEvent:Connect(OnLobbyStartRequest)
+
+	changeLobbyArgs.OnServerEvent:Connect(OnChangeLobbyArgs)
 
 	timerFinishEvent.Event:Connect(OnLobbyTimerFinish)
 end

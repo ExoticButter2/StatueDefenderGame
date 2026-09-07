@@ -44,9 +44,7 @@ function LobbyClass:ResetLobby()
 	print("Reset lobby " .. self.lobbyData.lobbyId)
 end
 
-function LobbyClass:StartLobby(args)
-	self:ChangeLobbySettings(args)
-
+function LobbyClass:StartLobby()
 	task.spawn(function()
 		self.lobbyData.timer:StartTimer()
 	end)
@@ -56,23 +54,23 @@ function LobbyClass:StartLobby(args)
 	print("Started lobby from lobby class")
 end
 
-function LobbyClass:ChangeLobbySettings(args: {}) --changes lobby settings args
-	local lobbyData = self.lobbyData
+-- function LobbyClass:ChangeLobbySettings(args: {}) --changes lobby settings args
+-- 	local lobbyData = self.lobbyData
 
-	for setting, v in pairs(args) do
-		if not lobbyData.args[setting] then --if setting doesn't exist
-			warn("No setting found in args with given args table")
-			continue
-		end
+-- 	for setting, v in pairs(args) do
+-- 		if not lobbyData.args[setting] then --if setting doesn't exist
+-- 			warn("No setting found in args with given args table")
+-- 			continue
+-- 		end
 
-		lobbyData.args[setting] = v
-	end
+-- 		lobbyData.args[setting] = v
+-- 	end
 
-	local playerLimit = lobbyData.args["playerLimit"]
+-- 	local playerLimit = lobbyData.args["playerLimit"]
 
-	lobbyData.args["playerLimit"] =
-		math.clamp(playerLimit, lobbyDataModule.minPlayerLimit, lobbyDataModule.maxPlayerLimit) --prevent cheaters going beyond limits
-end
+-- 	lobbyData.args["playerLimit"] =
+-- 		math.clamp(playerLimit, lobbyDataModule.minPlayerLimit, lobbyDataModule.maxPlayerLimit) --prevent cheaters going beyond limits
+-- end
 
 function LobbyClass:OpenLobby()
 	self.lobbyData.lobbyOpen = true
