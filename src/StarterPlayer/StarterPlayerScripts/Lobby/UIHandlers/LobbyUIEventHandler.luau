@@ -1,5 +1,4 @@
 local starterPlayer = game:GetService("StarterPlayer")
-local players = game:GetService("Players")
 
 local lobbyUIData = require(starterPlayer.StarterPlayerScripts.Lobby.LobbyUIData.LobbyUIDatabase)
 
