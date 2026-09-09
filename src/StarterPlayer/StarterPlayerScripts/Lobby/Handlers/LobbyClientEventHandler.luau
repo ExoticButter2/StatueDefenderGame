@@ -1,21 +1,18 @@
 --!strict
-local replicatedStorage = game:GetService("ReplicatedStorage")
 local starterPlayer = game:GetService("StarterPlayer")
 
 local starterPlayerScripts = starterPlayer:WaitForChild("StarterPlayerScripts")
-local lobbyScriptsFolder: Folder = starterPlayerScripts:WaitForChild("Lobby")
-local uiHandlersFolder: Folder = lobbyScriptsFolder:WaitForChild("UIHandlers")
 
-local eventsFolder: Folder = replicatedStorage:WaitForChild("Events")
-local lobbyEventsFolder: Folder = eventsFolder:WaitForChild("Lobby")
+local lobbyUIDataFolder: Folder = starterPlayerScripts:WaitForChild("Lobby"):WaitForChild("LobbyUIData")
+local lobbyUIData = require(lobbyUIDataFolder.LobbyUIDatabase)
 
-local onLobbyPlayerJoin: RemoteEvent = lobbyEventsFolder:WaitForChild("OnLobbyPlayerJoin")
-local onLobbyHostJoin: RemoteEvent = lobbyEventsFolder:WaitForChild("OnLobbyHostJoin")
-local onLobbyPlayerLeave: RemoteEvent = lobbyEventsFolder:WaitForChild("OnLobbyPlayerLeave")
-local onLobbyHostLeave: RemoteEvent = lobbyEventsFolder:WaitForChild("OnLobbyHostLeave")
+local onLobbyPlayerJoin: RemoteEvent = lobbyUIData.lobbyEventsFolder:WaitForChild("OnLobbyPlayerJoin")
+local onLobbyHostJoin: RemoteEvent = lobbyUIData.lobbyEventsFolder:WaitForChild("OnLobbyHostJoin")
+local onLobbyPlayerLeave: RemoteEvent = lobbyUIData.lobbyEventsFolder:WaitForChild("OnLobbyPlayerLeave")
+local onLobbyHostLeave: RemoteEvent = lobbyUIData.lobbyEventsFolder:WaitForChild("OnLobbyHostLeave")
 
-local lobbyPlayerUIHandler = require(uiHandlersFolder.LobbyPlayerUIHandler)
-local lobbyHostUIHandler = require(uiHandlersFolder.LobbyHostUIHandler)
+local lobbyPlayerUIHandler = require(lobbyUIData.uiHandlersFolder.LobbyPlayerUIHandler)
+local lobbyHostUIHandler = require(lobbyUIData.uiHandlersFolder.LobbyHostUIHandler)
 
 local LobbyClientEventHandler = {}
 

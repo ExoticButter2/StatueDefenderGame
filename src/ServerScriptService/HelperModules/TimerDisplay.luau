@@ -64,4 +64,16 @@ function TimerDisplay:UpdateTimeRemaining()
 	end
 end
 
+function TimerDisplay:DisplayText(text: string)
+	self.timeRemainingTextLabel.Text = text
+end
+
+function TimerDisplay:HideDisplay()
+	self.timeRemainingTextLabel.Visible = false
+end
+
+function TimerDisplay:ShowDisplay()
+	self.timeRemainingTextLabel.Visible = true
+end
+
 return TimerDisplay

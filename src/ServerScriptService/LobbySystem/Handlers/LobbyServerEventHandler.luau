@@ -7,8 +7,7 @@ local eventsFolderServer: Folder = serverStorage:FindFirstChild("Events")
 local lobbyEventsFolderServer: Folder = eventsFolderServer:FindFirstChild("Lobby")
 local timerEventsFolderServer: Folder = eventsFolderServer:FindFirstChild("Timer")
 
-local eventsFolderClient: Folder = replicatedStorage:FindFirstChild("Events")
-local lobbyEventsFolderClient: Folder = eventsFolderClient:FindFirstChild("Lobby")
+local eventsFolderClient: Folder = replicatedStorage:FindFirstChild("Lobby"):FindFirstChild("Events")
 
 local lobbySystemFolder: Folder = serverScriptService:FindFirstChild("LobbySystem")
 
@@ -21,11 +20,11 @@ local lobbyPlayerLeaveEvent: BindableEvent = lobbyEventsFolderServer:FindFirstCh
 local lobbyHostJoinEvent: BindableEvent = lobbyEventsFolderServer:FindFirstChild("LobbyHostJoinServer")
 local lobbyHostLeaveEvent: BindableEvent = lobbyEventsFolderServer:FindFirstChild("LobbyHostLeaveServer")
 
-local changeLobbyArgs: RemoteEvent = lobbyEventsFolderClient:FindFirstChild("ChangeLobbyArgs")
+local changeLobbyArgs: RemoteEvent = eventsFolderClient:FindFirstChild("ChangeLobbyArgs")
 
-local lobbyExitRequestEvent: RemoteEvent = lobbyEventsFolderClient:FindFirstChild("LobbyExitRequest")
+local lobbyExitRequestEvent: RemoteEvent = eventsFolderClient:FindFirstChild("LobbyExitRequest")
 
-local lobbyStartRequest: RemoteEvent = lobbyEventsFolderClient:FindFirstChild("LobbyStartRequest")
+local lobbyStartRequest: RemoteEvent = eventsFolderClient:FindFirstChild("LobbyStartRequest")
 
 local timerFinishEvent: BindableEvent = timerEventsFolderServer:FindFirstChild("TimerFinish")
 
@@ -66,7 +65,7 @@ local function OnLobbyTimerFinish(timerId: number)
 	lobbyManager.OnLobbyTimerFinish(timerId)
 end
 
-local function OnChangeLobbyArgs(argsToChange: {}, player: Player)
+local function OnChangeLobbyArgs(player: Player, argsToChange: {})
 	lobbyManager.ChangeLobbyArgs(argsToChange, player)
 	print("Change lobby args event handling")
 end

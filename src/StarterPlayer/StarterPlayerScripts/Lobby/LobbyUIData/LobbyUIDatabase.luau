@@ -11,7 +11,7 @@ LobbyUIDatabase.lobbyClientFolder = starterPlayerScripts:WaitForChild("Lobby")
 LobbyUIDatabase.handlersFolder = LobbyUIDatabase.lobbyClientFolder:WaitForChild("Handlers")
 LobbyUIDatabase.uiHandlersFolder = LobbyUIDatabase.lobbyClientFolder:WaitForChild("UIHandlers")
 
-LobbyUIDatabase.lobbyEventsFolder = replicatedStorage:WaitForChild("Events"):WaitForChild("Lobby")
+LobbyUIDatabase.lobbyEventsFolder = replicatedStorage:WaitForChild("Lobby"):WaitForChild("Events")
 LobbyUIDatabase.changeLobbyArgsEvent = LobbyUIDatabase.lobbyEventsFolder:WaitForChild("ChangeLobbyArgs")
 
 function LobbyUIDatabase.UpdateUIVariables()
@@ -45,5 +45,7 @@ end
 function LobbyUIDatabase.Initialize()
 	LobbyUIDatabase.UpdateUIVariables()
 end
+
+LobbyUIDatabase.Initialize()
 
 return LobbyUIDatabase

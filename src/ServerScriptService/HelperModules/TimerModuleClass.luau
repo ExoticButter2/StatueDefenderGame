@@ -11,7 +11,7 @@ local timerTickEvent: BindableEvent = timerEventsFolder:FindFirstChild("TimerTic
 local TimerModule = {}
 
 TimerModule.defaultSpeed = 1
-TimerModule.defaultDuration = 30
+TimerModule.defaultDuration = 10
 
 local paused: boolean = false
 
@@ -66,6 +66,7 @@ function TimerModule:StartTimer() --starts time ticking
 	local timeElapsed = 0
 
 	timerStartEvent:Fire()
+
 	print("Timer duration: " .. self.duration)
 
 	print("Started timer!")

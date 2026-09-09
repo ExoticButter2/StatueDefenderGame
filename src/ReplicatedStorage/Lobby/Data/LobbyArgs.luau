@@ -1,12 +1,12 @@
 --!strict
 local LobbyArgs = {}
 
-local maxPlayerLimit: number = 8
-local minPlayerLimit: number = 1
+LobbyArgs.maxPlayerLimit = 8
+LobbyArgs.minPlayerLimit = 1
 
-local defaultPlayerLimit: number = 4
+LobbyArgs.defaultPlayerLimit = 4
 
-local defaultFriendsOnly: boolean = false
+LobbyArgs.defaultFriendsOnly = false
 
 local defaultTeleportPlaceId: number = 138540525852189
 
@@ -23,27 +23,27 @@ function LobbyArgs.new(teleportPlaceId: number?, friendsOnly: boolean?, playerLi
 	local self = setmetatable({}, { __index = LobbyArgs })
 
 	self.teleportPlaceId = teleportPlaceId or defaultTeleportPlaceId
-	self.friendsOnly = friendsOnly or defaultFriendsOnly
-	self.playerLimit = playerLimit or defaultPlayerLimit
+	self.friendsOnly = friendsOnly or LobbyArgs.defaultFriendsOnly
+	self.playerLimit = playerLimit or LobbyArgs.defaultPlayerLimit
 
 	return self
 end
 
 local function ValidateSetting(setting, value)
 	if setting == "friendsOnly" then
-		if type(setting) ~= "boolean" then
+		if type(value) ~= "boolean" then
 			return false
 		end
 	elseif setting == "playerLimit" then
-		if type(setting) ~= "number" then
+		if type(value) ~= "number" then
 			return false
 		end
 
-		if value > maxPlayerLimit or value < minPlayerLimit then
+		if value > LobbyArgs.maxPlayerLimit or value < LobbyArgs.minPlayerLimit then
 			return false
 		end
 	elseif setting == "teleportPlaceId" then
-		if type(setting) ~= "number" then
+		if type(value) ~= "number" then
 			return false
 		end
 	end
@@ -51,16 +51,23 @@ local function ValidateSetting(setting, value)
 	return true
 end
 
+function LobbyArgs:ResetArgsToDefault()
+	self.friendsOnly = LobbyArgs.defaultFriendsOnly
+	self.playerLimit = LobbyArgs.defaultPlayerLimit
+	self.teleportPlaceId = LobbyArgs.defaultTeleportPlaceId
+end
+
 function LobbyArgs:ChangeArgs(argsToChange: {})
 	for setting, v in pairs(argsToChange) do
-		if not self[setting] then
+		if self[setting] == nil then
+			warn("Setting doesn't match with lobbyArgs settings!")
 			continue
 		end
 
 		if not ValidateSetting(setting, v) then
 			warn("Player who changed args possibly cheating")
 			if setting == "playerLimit" then
-				self[setting] = math.clamp(v, minPlayerLimit, maxPlayerLimit) --to allow without aborting entirely
+				self[setting] = math.clamp(v, LobbyArgs.minPlayerLimit, LobbyArgs.maxPlayerLimit) --to allow without aborting entirely
 			end
 
 			continue --check next setting
@@ -68,8 +75,8 @@ function LobbyArgs:ChangeArgs(argsToChange: {})
 
 		self[setting] = v
 
-		print("Applied setting: " .. setting)
-		print("To value: " .. v)
+		print("Applied setting: " .. tostring(setting))
+		print("To value: " .. tostring(v))
 	end
 end
 

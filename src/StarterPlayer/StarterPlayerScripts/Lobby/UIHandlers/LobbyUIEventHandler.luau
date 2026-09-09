@@ -3,20 +3,57 @@ local players = game:GetService("Players")
 
 local lobbyUIData = require(starterPlayer.StarterPlayerScripts.Lobby.LobbyUIData.LobbyUIDatabase)
 
+local lobbyStartHandler = require(lobbyUIData.uiHandlersFolder.LobbyHostUIStartHandler)
+local lobbyFriendsOnlyHandler = require(lobbyUIData.uiHandlersFolder.LobbyFriendsOnlyHandler)
+local lobbyPlayerLimitHandler = require(lobbyUIData.uiHandlersFolder.LobbyPlayerLimitHandler)
+
+local lobbyHostUiHandler = require(lobbyUIData.uiHandlersFolder.LobbyHostUIHandler)
+local lobbyPlayerUiHandler = require(lobbyUIData.uiHandlersFolder.LobbyPlayerUIHandler)
+
+local lobbyExitHandler = require(lobbyUIData.uiHandlersFolder.LobbyPlayerUIExitHandler)
+
 local LobbyUIEventHandler = {}
 
 local startButtonPress: RBXScriptConnection = nil
 local playerLimitIncreasePress: RBXScriptConnection = nil
 local playerLimitDecreasePress: RBXScriptConnection = nil
+local friendsOnlyTogglePress: RBXScriptConnection = nil
 local exitButtonPress: RBXScriptConnection = nil
 
-local function OnStartButtonPress() end
+local hostLeaveEvent: RemoteEvent = lobbyUIData.lobbyEventsFolder:WaitForChild("OnLobbyHostLeave")
+local playerTeleportEvent: RemoteEvent = lobbyUIData.lobbyEventsFolder:WaitForChild("OnPlayerTeleport")
 
-local function OnPlayerLimitIncreasePress() end
+local function OnStartButtonPress()
+	lobbyStartHandler.RequestLobbyStart()
+end
 
-local function OnPlayerLimitDecreasePress() end
+local function OnPlayerLimitIncreasePress()
+	print("Player limit increase button pressed")
+	lobbyPlayerLimitHandler.IncreasePlayerLimit()
+end
 
-local function OnExitButtonPress() end
+local function OnPlayerLimitDecreasePress()
+	print("Player limit decrease button pressed")
+	lobbyPlayerLimitHandler.DecreasePlayerLimit()
+end
+
+local function OnExitButtonPress()
+	lobbyExitHandler.OnExitButtonPress()
+end
+
+local function OnFriendsOnlyButtonPress()
+	print("Friends only button pressed")
+	lobbyFriendsOnlyHandler.OnFriendsOnlyButtonPress()
+end
+
+local function OnHostLeave()
+	lobbyHostUiHandler.ResetUIToDefault()
+	print("Left lobby as host")
+end
+
+local function OnPlayerTeleport()
+	lobbyPlayerUiHandler.OnTeleport()
+end
 
 local function UpdateUIEvents()
 	if startButtonPress then
@@ -39,6 +76,11 @@ local function UpdateUIEvents()
 		playerLimitDecreasePress = nil
 	end
 
+	if friendsOnlyTogglePress then
+		friendsOnlyTogglePress:Disconnect()
+		friendsOnlyTogglePress = nil
+	end
+
 	startButtonPress = lobbyUIData.startLobbyButton.MouseButton1Click:Connect(OnStartButtonPress)
 	exitButtonPress = lobbyUIData.playerExitButton.MouseButton1Click:Connect(OnExitButtonPress)
 
@@ -46,10 +88,16 @@ local function UpdateUIEvents()
 		lobbyUIData.playerLimitIncreaseButton.MouseButton1Click:Connect(OnPlayerLimitIncreasePress)
 	playerLimitDecreasePress =
 		lobbyUIData.playerLimitDecreaseButton.MouseButton1Click:Connect(OnPlayerLimitDecreasePress)
+
+	friendsOnlyTogglePress = lobbyUIData.friendsOnlyToggleButton.MouseButton1Click:Connect(OnFriendsOnlyButtonPress)
 end
 
 function LobbyUIEventHandler.Initialize()
 	UpdateUIEvents()
+
+	hostLeaveEvent.OnClientEvent:Connect(OnHostLeave)
+	playerTeleportEvent.OnClientEvent:Connect(OnPlayerTeleport)
+
 	players.LocalPlayer.CharacterAdded:Connect(UpdateUIEvents)
 end
 

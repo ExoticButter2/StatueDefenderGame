@@ -7,6 +7,9 @@ local lobbyUIDataFolder: Folder = lobbyUIScriptsFolder:WaitForChild("LobbyUIData
 
 local lobbyUIData = require(lobbyUIDataFolder.LobbyUIDatabase)
 
+local friendsOnlyHandler = require(lobbyUIData.uiHandlersFolder.LobbyFriendsOnlyHandler)
+local playerLimitHandler = require(lobbyUIData.uiHandlersFolder.LobbyPlayerLimitHandler)
+
 local lobbyHostUIHandler = {}
 
 function lobbyHostUIHandler.EnableHostUI()
@@ -19,6 +22,9 @@ function lobbyHostUIHandler.DisableHostUI()
 	print("Disabled host ui")
 end
 
-function lobbyHostUIHandler.Initialize() end
+function lobbyHostUIHandler.ResetUIToDefault()
+	friendsOnlyHandler.ResetFriendsOnly()
+	playerLimitHandler.ResetPlayerLimit()
+end
 
 return lobbyHostUIHandler

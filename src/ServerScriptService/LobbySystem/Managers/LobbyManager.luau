@@ -1,11 +1,12 @@
 --!strict
 local serverScriptService = game:GetService("ServerScriptService")
+local replicatedStorage = game:GetService("ReplicatedStorage")
 
 local lobbySystemFolder: Folder = serverScriptService:FindFirstChild("LobbySystem")
 
 local lobbyClass = require(lobbySystemFolder.Classes.LobbyClass)
 local lobbyData = require(lobbySystemFolder.Data.LobbyData)
-local lobbyArgsModule = require(lobbySystemFolder.Classes.LobbyArgs)
+local lobbyArgsModule = require(replicatedStorage.Lobby.Data.LobbyArgs)
 
 local helperModulesFolder: Folder = serverScriptService:FindFirstChild("HelperModules")
 
@@ -75,6 +76,8 @@ local function CreateLobby(lobbyModel: Model): lobbyClass.Lobby
 	local timerDisplayInstance: timerDisplayModule.TimerDisplay =
 		timerDisplayModule.new(timerInstance, timeTextLabel, timeTickSound)
 
+	timerDisplayInstance:HideDisplay() --hide by default
+
 	local lobbyArgs: lobbyArgsModule.LobbyArgs = lobbyArgsModule.new()
 
 	local lobbyDataInstance: lobbyData.LobbyData =
@@ -103,7 +106,14 @@ function LobbyManager.ChangeLobbyArgs(argsToChange: {}, playerInLobby: Player)
 		return
 	end
 
-	if #argsToChange == 0 or type(argsToChange) ~= "table" then
+	local amountInArgs = 0
+
+	for _, _ in pairs(argsToChange) do --count items in dictionary
+		amountInArgs += 1
+	end
+
+	if amountInArgs == 0 or type(argsToChange) ~= "table" then
+		warn("Args to change are invalid")
 		return
 	end
 
@@ -119,7 +129,7 @@ function LobbyManager.ChangeLobbyArgs(argsToChange: {}, playerInLobby: Player)
 		return
 	end
 
-	lobby.lobbyData.args.ChangeArgs(argsToChange)
+	lobby.lobbyData.args:ChangeArgs(argsToChange)
 	print("Successfully changed lobby args")
 end
 
