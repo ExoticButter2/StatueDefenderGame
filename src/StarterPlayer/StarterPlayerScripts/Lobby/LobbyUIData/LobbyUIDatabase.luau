@@ -22,7 +22,8 @@ function LobbyUIDatabase.UpdateUIVariables()
 	LobbyUIDatabase.lobbyHostGui = LobbyUIDatabase.lobbyUiFolder:WaitForChild("HostGui")
 	LobbyUIDatabase.lobbyPlayerGui = LobbyUIDatabase.lobbyUiFolder:WaitForChild("PlayerGui")
 
-	LobbyUIDatabase.playerExitButton = LobbyUIDatabase.lobbyPlayerGui:WaitForChild("Frame"):WaitForChild("ExitButton")
+	LobbyUIDatabase.playerExitFrame = LobbyUIDatabase.lobbyPlayerGui:WaitForChild("Frame")
+	LobbyUIDatabase.playerExitButton = LobbyUIDatabase.playerExitFrame:WaitForChild("ExitButton")
 
 	LobbyUIDatabase.lobbyExitFrame = LobbyUIDatabase.lobbyPlayerGui:WaitForChild("Frame")
 	LobbyUIDatabase.lobbyExitButton = LobbyUIDatabase.lobbyExitFrame:WaitForChild("ExitButton")
