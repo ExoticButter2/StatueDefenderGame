@@ -29,7 +29,7 @@ function LobbyArgs.new(teleportPlaceId: number?, friendsOnly: boolean?, playerLi
 	return self
 end
 
-local function ValidateSetting(setting, value)
+local function ValidateSetting(setting, value): boolean
 	if setting == "friendsOnly" then
 		if type(value) ~= "boolean" then
 			return false
