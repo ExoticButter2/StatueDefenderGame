@@ -8,14 +8,12 @@ local lobbyUIDataFolder: Folder = lobbyUIScriptsFolder:WaitForChild("LobbyUIData
 local lobbyUIData = require(lobbyUIDataFolder.LobbyUIDatabase)
 local lobbyArgs = require(replicatedStorage.Lobby.Data.LobbyArgs)
 
-local playerLimitDisplayLabel: TextLabel = lobbyUIData.playerLimitDisplayLabel
-
 local LobbyPlayerLimitHandler = {}
 
 local playerLimit: number = lobbyArgs.defaultPlayerLimit
 
 local function UpdatePlayerLimitDisplayLabel()
-	playerLimitDisplayLabel.Text = tostring(playerLimit)
+	lobbyUIData.playerLimitDisplayLabel.Text = tostring(playerLimit)
 end
 
 local function SetPlayerLimitToValue(value: number)

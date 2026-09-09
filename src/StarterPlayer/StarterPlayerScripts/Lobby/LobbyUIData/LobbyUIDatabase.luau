@@ -44,6 +44,7 @@ end
 
 function LobbyUIDatabase.Initialize()
 	LobbyUIDatabase.UpdateUIVariables()
+	print("Initialized lobby UI database")
 end
 
 LobbyUIDatabase.Initialize()

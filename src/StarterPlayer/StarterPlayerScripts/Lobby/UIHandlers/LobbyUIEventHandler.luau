@@ -55,7 +55,7 @@ local function OnPlayerTeleport()
 	lobbyPlayerUiHandler.OnTeleport()
 end
 
-local function UpdateUIEvents()
+function LobbyUIEventHandler.UpdateUIEvents()
 	if startButtonPress then
 		startButtonPress:Disconnect()
 		startButtonPress = nil
@@ -93,12 +93,14 @@ local function UpdateUIEvents()
 end
 
 function LobbyUIEventHandler.Initialize()
-	UpdateUIEvents()
+	LobbyUIEventHandler.UpdateUIEvents()
 
 	hostLeaveEvent.OnClientEvent:Connect(OnHostLeave)
 	playerTeleportEvent.OnClientEvent:Connect(OnPlayerTeleport)
 
-	players.LocalPlayer.CharacterAdded:Connect(UpdateUIEvents)
+	print("Lobby ui event handler initialized")
 end
+
+LobbyUIEventHandler.Initialize()
 
 return LobbyUIEventHandler

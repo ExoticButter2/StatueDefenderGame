@@ -44,4 +44,6 @@ function LobbyClientEventHandler.Initialize()
 	onLobbyHostLeave.OnClientEvent:Connect(OnHostLeave)
 end
 
+LobbyClientEventHandler.Initialize()
+
 return LobbyClientEventHandler
