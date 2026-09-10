@@ -54,7 +54,7 @@ end
 function LobbyArgs:ResetArgsToDefault()
 	self.friendsOnly = LobbyArgs.defaultFriendsOnly
 	self.playerLimit = LobbyArgs.defaultPlayerLimit
-	self.teleportPlaceId = LobbyArgs.defaultTeleportPlaceId
+	self.teleportPlaceId = defaultTeleportPlaceId
 end
 
 function LobbyArgs:ChangeArgs(argsToChange: {})
