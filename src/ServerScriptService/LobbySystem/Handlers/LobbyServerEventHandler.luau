@@ -3,30 +3,30 @@ local serverStorage = game:GetService("ServerStorage")
 local serverScriptService = game:GetService("ServerScriptService")
 local replicatedStorage = game:GetService("ReplicatedStorage")
 
-local eventsFolderServer: Folder = serverStorage:FindFirstChild("Events")
-local lobbyEventsFolderServer: Folder = eventsFolderServer:FindFirstChild("Lobby")
-local timerEventsFolderServer: Folder = eventsFolderServer:FindFirstChild("Timer")
+local eventsFolderServer: Folder = serverStorage.Events
+local lobbyEventsFolderServer: Folder = eventsFolderServer.Lobby
+local timerEventsFolderServer: Folder = eventsFolderServer.Timer
 
-local eventsFolderClient: Folder = replicatedStorage:FindFirstChild("Lobby"):FindFirstChild("Events")
+local eventsFolderClient: Folder = replicatedStorage.Lobby.Events
 
-local lobbySystemFolder: Folder = serverScriptService:FindFirstChild("LobbySystem")
+local lobbySystemFolder: Folder = serverScriptService.LobbySystem
 
-local managersFolder: Folder = lobbySystemFolder:FindFirstChild("Managers")
+local managersFolder: Folder = lobbySystemFolder.Managers
 
 local lobbyManager = require(managersFolder.LobbyManager)
 
-local lobbyPlayerJoinEvent: BindableEvent = lobbyEventsFolderServer:FindFirstChild("LobbyPlayerJoinServer")
-local lobbyPlayerLeaveEvent: BindableEvent = lobbyEventsFolderServer:FindFirstChild("LobbyPlayerLeaveServer")
-local lobbyHostJoinEvent: BindableEvent = lobbyEventsFolderServer:FindFirstChild("LobbyHostJoinServer")
-local lobbyHostLeaveEvent: BindableEvent = lobbyEventsFolderServer:FindFirstChild("LobbyHostLeaveServer")
+local lobbyPlayerJoinEvent: BindableEvent = lobbyEventsFolderServer.LobbyPlayerJoinServer
+local lobbyPlayerLeaveEvent: BindableEvent = lobbyEventsFolderServer.LobbyPlayerLeaveServer
+local lobbyHostJoinEvent: BindableEvent = lobbyEventsFolderServer.LobbyHostJoinServer
+local lobbyHostLeaveEvent: BindableEvent = lobbyEventsFolderServer.LobbyHostLeaveServer
 
-local changeLobbyArgs: RemoteEvent = eventsFolderClient:FindFirstChild("ChangeLobbyArgs")
+local changeLobbyArgs: RemoteEvent = eventsFolderClient.ChangeLobbyArgs
 
-local lobbyExitRequestEvent: RemoteEvent = eventsFolderClient:FindFirstChild("LobbyExitRequest")
+local lobbyExitRequestEvent: RemoteEvent = eventsFolderClient.LobbyExitRequest
 
-local lobbyStartRequest: RemoteEvent = eventsFolderClient:FindFirstChild("LobbyStartRequest")
+local lobbyStartRequest: RemoteEvent = eventsFolderClient.LobbyStartRequest
 
-local timerFinishEvent: BindableEvent = timerEventsFolderServer:FindFirstChild("TimerFinish")
+local timerFinishEvent: BindableEvent = timerEventsFolderServer.TimerFinish
 
 local LobbyServerEventHandler = {}
 

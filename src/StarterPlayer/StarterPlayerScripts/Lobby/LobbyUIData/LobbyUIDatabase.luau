@@ -3,44 +3,44 @@ local players = game:GetService("Players")
 local starterPlayer = game:GetService("StarterPlayer")
 local replicatedStorage = game:GetService("ReplicatedStorage")
 
-local starterPlayerScripts: Folder = starterPlayer:WaitForChild("StarterPlayerScripts")
+local starterPlayerScripts: Folder = starterPlayer.StarterPlayerScripts
 
 local LobbyUIDatabase = {}
 
-LobbyUIDatabase.lobbyClientFolder = starterPlayerScripts:WaitForChild("Lobby")
-LobbyUIDatabase.handlersFolder = LobbyUIDatabase.lobbyClientFolder:WaitForChild("Handlers")
-LobbyUIDatabase.uiHandlersFolder = LobbyUIDatabase.lobbyClientFolder:WaitForChild("UIHandlers")
+LobbyUIDatabase.lobbyClientFolder = starterPlayerScripts.Lobby
+LobbyUIDatabase.handlersFolder = LobbyUIDatabase.lobbyClientFolder.Handlers
+LobbyUIDatabase.uiHandlersFolder = LobbyUIDatabase.lobbyClientFolder.UIHandlers
 
-LobbyUIDatabase.lobbyEventsFolder = replicatedStorage:WaitForChild("Lobby"):WaitForChild("Events")
-LobbyUIDatabase.changeLobbyArgsEvent = LobbyUIDatabase.lobbyEventsFolder:WaitForChild("ChangeLobbyArgs")
+LobbyUIDatabase.lobbyEventsFolder = replicatedStorage.Lobby.Events
+LobbyUIDatabase.changeLobbyArgsEvent = LobbyUIDatabase.lobbyEventsFolder.ChangeLobbyArgs
 
 function LobbyUIDatabase.UpdateUIVariables()
-	LobbyUIDatabase.playerGui = players.LocalPlayer:WaitForChild("PlayerGui")
+	LobbyUIDatabase.playerGui = players.LocalPlayer.PlayerGui
 
-	LobbyUIDatabase.lobbyUiFolder = LobbyUIDatabase.playerGui:WaitForChild("LobbyUI")
+	LobbyUIDatabase.lobbyUiFolder = LobbyUIDatabase.playerGui.LobbyUI
 
-	LobbyUIDatabase.lobbyHostGui = LobbyUIDatabase.lobbyUiFolder:WaitForChild("HostGui")
-	LobbyUIDatabase.lobbyPlayerGui = LobbyUIDatabase.lobbyUiFolder:WaitForChild("PlayerGui")
+	LobbyUIDatabase.lobbyHostGui = LobbyUIDatabase.lobbyUiFolder.HostGui
+	LobbyUIDatabase.lobbyPlayerGui = LobbyUIDatabase.lobbyUiFolder.PlayerGui
 
-	LobbyUIDatabase.playerExitFrame = LobbyUIDatabase.lobbyPlayerGui:WaitForChild("Frame")
-	LobbyUIDatabase.playerExitButton = LobbyUIDatabase.playerExitFrame:WaitForChild("ExitButton")
+	LobbyUIDatabase.playerExitFrame = LobbyUIDatabase.lobbyPlayerGui.Frame
+	LobbyUIDatabase.playerExitButton = LobbyUIDatabase.playerExitFrame.ExitButton
 
-	LobbyUIDatabase.lobbyExitFrame = LobbyUIDatabase.lobbyPlayerGui:WaitForChild("Frame")
-	LobbyUIDatabase.lobbyExitButton = LobbyUIDatabase.lobbyExitFrame:WaitForChild("ExitButton")
+	LobbyUIDatabase.lobbyExitFrame = LobbyUIDatabase.lobbyPlayerGui.Frame
+	LobbyUIDatabase.lobbyExitButton = LobbyUIDatabase.lobbyExitFrame.ExitButton
 
-	LobbyUIDatabase.hostBackgroundFrame = LobbyUIDatabase.lobbyHostGui:WaitForChild("BackgroundFrame")
+	LobbyUIDatabase.hostBackgroundFrame = LobbyUIDatabase.lobbyHostGui.BackgroundFrame
 
-	LobbyUIDatabase.startLobbyFrame = LobbyUIDatabase.hostBackgroundFrame:WaitForChild("StartFrame")
-	LobbyUIDatabase.startLobbyButton = LobbyUIDatabase.startLobbyFrame:WaitForChild("LobbyStartButton")
+	LobbyUIDatabase.startLobbyFrame = LobbyUIDatabase.hostBackgroundFrame.StartFrame
+	LobbyUIDatabase.startLobbyButton = LobbyUIDatabase.startLobbyFrame.LobbyStartButton
 
-	LobbyUIDatabase.friendsOnlyFrame = LobbyUIDatabase.hostBackgroundFrame:WaitForChild("FriendsOnlyFrame")
-	LobbyUIDatabase.friendsOnlyToggleButton = LobbyUIDatabase.friendsOnlyFrame:WaitForChild("FriendsOnlyToggle")
+	LobbyUIDatabase.friendsOnlyFrame = LobbyUIDatabase.hostBackgroundFrame.FriendsOnlyFrame
+	LobbyUIDatabase.friendsOnlyToggleButton = LobbyUIDatabase.friendsOnlyFrame.FriendsOnlyToggle
 
-	LobbyUIDatabase.playerLimitFrame = LobbyUIDatabase.hostBackgroundFrame:WaitForChild("PlayerLimitFrame")
+	LobbyUIDatabase.playerLimitFrame = LobbyUIDatabase.hostBackgroundFrame.PlayerLimitFrame
 
-	LobbyUIDatabase.playerLimitDisplayLabel = LobbyUIDatabase.playerLimitFrame:WaitForChild("AmountLabel")
-	LobbyUIDatabase.playerLimitIncreaseButton = LobbyUIDatabase.playerLimitFrame:WaitForChild("IncreaseButton")
-	LobbyUIDatabase.playerLimitDecreaseButton = LobbyUIDatabase.playerLimitFrame:WaitForChild("DecreaseButton")
+	LobbyUIDatabase.playerLimitDisplayLabel = LobbyUIDatabase.playerLimitFrame.AmountLabel
+	LobbyUIDatabase.playerLimitIncreaseButton = LobbyUIDatabase.playerLimitFrame.IncreaseButton
+	LobbyUIDatabase.playerLimitDecreaseButton = LobbyUIDatabase.playerLimitFrame.DecreaseButton
 end
 
 function LobbyUIDatabase.Initialize()

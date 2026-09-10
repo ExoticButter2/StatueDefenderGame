@@ -2,9 +2,9 @@
 local starterPlayer = game:GetService("StarterPlayer")
 local tweenService = game:GetService("TweenService")
 
-local starterPlayerScripts: Folder = starterPlayer:WaitForChild("StarterPlayerScripts")
-local lobbyUIScriptsFolder: Folder = starterPlayerScripts:WaitForChild("Lobby")
-local lobbyUIDataFolder: Folder = lobbyUIScriptsFolder:WaitForChild("LobbyUIData")
+local starterPlayerScripts: Folder = starterPlayer.StarterPlayerScripts
+local lobbyUIScriptsFolder: Folder = starterPlayerScripts.Lobby
+local lobbyUIDataFolder: Folder = lobbyUIScriptsFolder.LobbyUIData
 
 local lobbyUIData = require(lobbyUIDataFolder.LobbyUIDatabase)
 

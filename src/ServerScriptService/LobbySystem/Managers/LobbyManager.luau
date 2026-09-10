@@ -2,13 +2,13 @@
 local serverScriptService = game:GetService("ServerScriptService")
 local replicatedStorage = game:GetService("ReplicatedStorage")
 
-local lobbySystemFolder: Folder = serverScriptService:FindFirstChild("LobbySystem")
+local lobbySystemFolder: Folder = serverScriptService.LobbySystem
 
 local lobbyClass = require(lobbySystemFolder.Classes.LobbyClass)
 local lobbyData = require(lobbySystemFolder.Data.LobbyData)
 local lobbyArgsModule = require(replicatedStorage.Lobby.Data.LobbyArgs)
 
-local helperModulesFolder: Folder = serverScriptService:FindFirstChild("HelperModules")
+local helperModulesFolder: Folder = serverScriptService.HelperModules
 
 local timerManager = require(helperModulesFolder.TimerManager)
 local timerModule = require(helperModulesFolder.TimerModuleClass)

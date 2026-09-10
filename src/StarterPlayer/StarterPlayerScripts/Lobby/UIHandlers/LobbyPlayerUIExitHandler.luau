@@ -1,12 +1,12 @@
 local starterPlayer = game:GetService("StarterPlayer")
 
-local starterPlayerScripts: Folder = starterPlayer:WaitForChild("StarterPlayerScripts")
-local lobbyUIScriptsFolder: Folder = starterPlayerScripts:WaitForChild("Lobby")
-local lobbyUIDataFolder: Folder = lobbyUIScriptsFolder:WaitForChild("LobbyUIData")
+local starterPlayerScripts: Folder = starterPlayer.StarterPlayerScripts
+local lobbyUIScriptsFolder: Folder = starterPlayerScripts.Lobby
+local lobbyUIDataFolder: Folder = lobbyUIScriptsFolder.LobbyUIData
 
 local lobbyUIData = require(lobbyUIDataFolder.LobbyUIDatabase)
 
-local lobbyExitRequestEvent = lobbyUIData.lobbyEventsFolder:WaitForChild("LobbyExitRequest")
+local lobbyExitRequestEvent = lobbyUIData.lobbyEventsFolder.LobbyExitRequest
 
 local LobbyPlayerUIExitHandler = {}
 

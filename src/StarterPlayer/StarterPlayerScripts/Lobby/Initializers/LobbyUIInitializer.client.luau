@@ -1,11 +1,11 @@
 --!strict
-local starterPlayerScripts = game:GetService("StarterPlayer"):WaitForChild("StarterPlayerScripts")
+local starterPlayerScripts = game:GetService("StarterPlayer").StarterPlayerScripts
 local players = game:GetService("Players")
 
-local lobbyClientFolder: Folder = starterPlayerScripts:WaitForChild("Lobby")
-local handlersFolder: Folder = lobbyClientFolder:WaitForChild("Handlers")
+local lobbyClientFolder: Folder = starterPlayerScripts.Lobby
+local handlersFolder: Folder = lobbyClientFolder.Handlers
 
-local lobbyUIDataFolder: Folder = lobbyClientFolder:WaitForChild("LobbyUIData")
+local lobbyUIDataFolder: Folder = lobbyClientFolder.LobbyUIData
 
 local lobbyUIData = require(lobbyUIDataFolder.LobbyUIDatabase)
 

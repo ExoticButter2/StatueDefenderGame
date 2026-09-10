@@ -1,12 +1,12 @@
 --!strict
 local serverStorage = game:GetService("ServerStorage")
-local eventsFolder = serverStorage:FindFirstChild("Events")
+local eventsFolder = serverStorage.Events
 
-local timerEventsFolder = eventsFolder:FindFirstChild("Timer")
+local timerEventsFolder = eventsFolder.Timer
 
-local timerStartEvent: BindableEvent = timerEventsFolder:FindFirstChild("TimerStart")
-local timerFinishedEvent: BindableEvent = timerEventsFolder:FindFirstChild("TimerFinish")
-local timerTickEvent: BindableEvent = timerEventsFolder:FindFirstChild("TimerTick")
+local timerStartEvent: BindableEvent = timerEventsFolder.TimerStart
+local timerFinishedEvent: BindableEvent = timerEventsFolder.TimerFinish
+local timerTickEvent: BindableEvent = timerEventsFolder.TimerTick
 
 local TimerModule = {}
 

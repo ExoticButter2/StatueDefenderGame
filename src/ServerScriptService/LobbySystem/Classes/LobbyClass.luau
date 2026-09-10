@@ -7,23 +7,23 @@ local serverStorage = game:GetService("ServerStorage")
 
 local lobbyDataModule = require(serverScriptService.LobbySystem.Data.LobbyData)
 
-local eventsFolderShared: Folder = replicatedStorage:FindFirstChild("Lobby"):FindFirstChild("Events")
+local eventsFolderShared: Folder = replicatedStorage.Lobby.Events
 
-local eventsFolderServer: Folder = serverStorage:FindFirstChild("Events")
-local lobbyEventsFolderServer: Folder = eventsFolderServer:FindFirstChild("Lobby")
+local eventsFolderServer: Folder = serverStorage.Events
+local lobbyEventsFolderServer: Folder = eventsFolderServer.Lobby
 
-local lobbyHostJoinEvent: RemoteEvent = eventsFolderShared:FindFirstChild("OnLobbyHostJoin")
-local lobbyHostLeaveEvent: RemoteEvent = eventsFolderShared:FindFirstChild("OnLobbyHostLeave")
+local lobbyHostJoinEvent: RemoteEvent = eventsFolderShared.OnLobbyHostJoin
+local lobbyHostLeaveEvent: RemoteEvent = eventsFolderShared.OnLobbyHostLeave
 
-local onPlayerTeleportEvent: RemoteEvent = eventsFolderShared:FindFirstChild("OnPlayerTeleport")
+local onPlayerTeleportEvent: RemoteEvent = eventsFolderShared.OnPlayerTeleport
 
-local lobbyPlayerJoinRemoteEvent: RemoteEvent = eventsFolderShared:FindFirstChild("OnLobbyPlayerJoin")
-local lobbyPlayerLeaveRemoteEvent: RemoteEvent = eventsFolderShared:FindFirstChild("OnLobbyPlayerLeave")
+local lobbyPlayerJoinRemoteEvent: RemoteEvent = eventsFolderShared.OnLobbyPlayerJoin
+local lobbyPlayerLeaveRemoteEvent: RemoteEvent = eventsFolderShared.OnLobbyPlayerLeave
 
-local lobbyPlayerJoinBindableEvent: BindableEvent = lobbyEventsFolderServer:FindFirstChild("LobbyPlayerJoinServer")
-local lobbyPlayerLeaveBindableEvent: BindableEvent = lobbyEventsFolderServer:FindFirstChild("LobbyPlayerLeaveServer")
-local lobbyHostJoinBindableEvent: BindableEvent = lobbyEventsFolderServer:FindFirstChild("LobbyHostJoinServer")
-local lobbyHostLeaveBindableEvent: BindableEvent = lobbyEventsFolderServer:FindFirstChild("LobbyHostLeaveServer")
+local lobbyPlayerJoinBindableEvent: BindableEvent = lobbyEventsFolderServer.LobbyPlayerJoinServer
+local lobbyPlayerLeaveBindableEvent: BindableEvent = lobbyEventsFolderServer.LobbyPlayerLeaveServer
+local lobbyHostJoinBindableEvent: BindableEvent = lobbyEventsFolderServer.LobbyHostJoinServer
+local lobbyHostLeaveBindableEvent: BindableEvent = lobbyEventsFolderServer.LobbyHostLeaveServer
 
 local fullLobbyTimerSpeed = 2
 local defaultLobbyTimerSpeed = 1
