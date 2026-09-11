@@ -20,6 +20,9 @@ local onPlayerTeleportEvent: RemoteEvent = eventsFolderShared.OnPlayerTeleport
 local lobbyPlayerJoinRemoteEvent: RemoteEvent = eventsFolderShared.OnLobbyPlayerJoin
 local lobbyPlayerLeaveRemoteEvent: RemoteEvent = eventsFolderShared.OnLobbyPlayerLeave
 
+local startCameraMovementEvent: RemoteEvent = eventsFolderShared.StartCameraMovement
+local stopCameraMovementEvent: RemoteEvent = eventsFolderShared.StopCameraMovement
+
 local lobbyPlayerJoinBindableEvent: BindableEvent = lobbyEventsFolderServer.LobbyPlayerJoinServer
 local lobbyPlayerLeaveBindableEvent: BindableEvent = lobbyEventsFolderServer.LobbyPlayerLeaveServer
 local lobbyHostJoinBindableEvent: BindableEvent = lobbyEventsFolderServer.LobbyHostJoinServer
@@ -76,7 +79,7 @@ function LobbyClass:ResetLobby()
 
 	self.lobbyData.timerDisplay:HideDisplay()
 
-	self.lobbyData.playerLimitDisplay:UpdateDisplay()
+	self.lobbyData.playerLimitDisplay:RemoveAllPlayerImages()
 
 	print("Reset lobby " .. self.lobbyData.lobbyId)
 end
@@ -99,6 +102,7 @@ function LobbyClass:StartLobby()
 
 	lobbyData.playerLimitDisplay:UpdateDisplay()
 
+	startCameraMovementEvent:FireClient(players:GetPlayerByUserId(lobbyData.hostId), lobbyData.cameraPart)
 	self:OpenLobby()
 
 	print("Started lobby from lobby class")
@@ -289,6 +293,10 @@ function LobbyClass:AddPlayer(player: Player) --all checks already performed
 	lobbyPlayerJoinRemoteEvent:FireClient(player)
 	lobbyPlayerJoinBindableEvent:Fire(player, lobbyData.lobbyId)
 
+	if self.lobbyStarted then
+		startCameraMovementEvent:FireClient(player, lobbyData.cameraPart)
+	end
+
 	if #playerIds == self.lobbyData.args.playerLimit then
 		SpeedUpLobbyTimer(self)
 	end
@@ -319,6 +327,10 @@ function LobbyClass:RemovePlayer(player: Player)
 
 	lobbyPlayerLeaveRemoteEvent:FireClient(player, lobbyData.lobbyId)
 	lobbyPlayerLeaveBindableEvent:Fire(player, lobbyData.lobbyId)
+
+	if self.lobbyStarted then --if lobby already started only then stop
+		stopCameraMovementEvent:FireClient(player, lobbyData.cameraPart)
+	end
 
 	ResetLobbyTimerSpeed(self)
 

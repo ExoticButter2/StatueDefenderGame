@@ -26,6 +26,7 @@ export type LobbyData = typeof(setmetatable({} :: {
 	touchPart: BasePart,
 	enterPart: BasePart,
 	exitPart: BasePart,
+	cameraPart: BasePart,
 	lobbyOpen: boolean?,
 	timer: timerModule.Timer,
 	timerDisplay: timerDisplayModule.TimerDisplay,
@@ -38,6 +39,7 @@ function LobbyData.new(
 	touchPart: BasePart,
 	enterPart: BasePart,
 	exitPart: BasePart,
+	cameraPart: BasePart,
 	lobbyOpen: boolean?,
 	timer: timerModule.Timer,
 	timerDisplay: timerDisplayModule.TimerDisplay,
@@ -54,6 +56,7 @@ function LobbyData.new(
 	self.touchPart = touchPart
 	self.enterPart = enterPart
 	self.exitPart = exitPart
+	self.cameraPart = cameraPart
 
 	self.lobbyOpen = lobbyOpen or true --open by default
 

@@ -25,6 +25,7 @@ local exitPartName = "ExitPart"
 local timeTextLabelName = "TimeTextLabel"
 local timeTickSoundName = "TickSound"
 local playerLimitGuiName = "PlayerLimitGui"
+local cameraPartName = "CameraPart"
 
 LobbyManager.Lobbies = {}
 
@@ -36,6 +37,7 @@ local function CreateLobby(lobbyModel: Model): lobbyClass.Lobby
 	local touchPart: BasePart
 	local enterPart: BasePart
 	local exitPart: BasePart
+	local cameraPart: BasePart
 	local timeTextLabel: TextLabel
 	local timeTickSound: Sound
 	local playerLimitGui: SurfaceGui
@@ -45,6 +47,7 @@ local function CreateLobby(lobbyModel: Model): lobbyClass.Lobby
 		playerLimitGui = touchPart[playerLimitGuiName]
 		enterPart = lobbyModel[enterPartName]
 		exitPart = lobbyModel[exitPartName]
+		cameraPart = lobbyModel[cameraPartName]
 		timeTextLabel = lobbyModel:FindFirstChild(timeTextLabelName, true)
 		timeTickSound = lobbyModel:FindFirstChild(timeTickSoundName, true)
 	end
@@ -79,6 +82,10 @@ local function CreateLobby(lobbyModel: Model): lobbyClass.Lobby
 		return
 	end
 
+	if not cameraPart then
+		warn("Add camera part named " .. cameraPartName .. " to the lobby model: " .. lobbyModel.Name)
+	end
+
 	local timerInstanceId: number = timerManager.CreateLobbyTimer(lobbyId)
 	local timerInstance: timerModule.Timer = timerManager.FindTimer(timerInstanceId)
 
@@ -98,6 +105,7 @@ local function CreateLobby(lobbyModel: Model): lobbyClass.Lobby
 		touchPart,
 		enterPart,
 		exitPart,
+		cameraPart,
 		true,
 		timerInstance,
 		timerDisplayInstance,

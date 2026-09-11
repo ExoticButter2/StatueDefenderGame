@@ -35,7 +35,7 @@ function PlayerLimitDisplay.new(playerLimitGui: SurfaceGui): PlayerLimitDisplay
 	return self
 end
 
-local function RemoveAllPlayerImages(self: PlayerLimitDisplay)
+function PlayerLimitDisplay:RemoveAllPlayerImages()
 	for _, image in ipairs(self.emptyPlayerImages) do
 		image:Destroy()
 	end
@@ -89,7 +89,7 @@ function PlayerLimitDisplay:UpdateDisplay()
 		return
 	end
 
-	RemoveAllPlayerImages(self)
+	self:RemoveAllPlayerImages()
 
 	AddImage(filledString, playersInLobby, self)
 	AddImage(emptyString, emptyPlayerSlots, self)

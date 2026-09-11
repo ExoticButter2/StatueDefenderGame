@@ -13,6 +13,13 @@ local onLobbyHostLeave: RemoteEvent = lobbyUIData.lobbyEventsFolder.OnLobbyHostL
 
 local lobbyPlayerUIHandler = require(lobbyUIData.uiHandlersFolder.LobbyPlayerUIHandler)
 local lobbyHostUIHandler = require(lobbyUIData.uiHandlersFolder.LobbyHostUIHandler)
+local lobbyCameraMovement = require(starterPlayerScripts.Lobby.Modules.LobbyCameraMovement)
+
+local startCameraMovementEvent: RemoteEvent = lobbyUIData.lobbyEventsFolder.StartCameraMovement
+local stopCameraMovementEvent: RemoteEvent = lobbyUIData.lobbyEventsFolder.StopCameraMovement
+
+startCameraMovementEvent.OnClientEvent:Connect(lobbyCameraMovement.StartCameraMovement)
+stopCameraMovementEvent.OnClientEvent:Connect(lobbyCameraMovement.StopCameraMovement)
 
 local LobbyClientEventHandler = {}
 
