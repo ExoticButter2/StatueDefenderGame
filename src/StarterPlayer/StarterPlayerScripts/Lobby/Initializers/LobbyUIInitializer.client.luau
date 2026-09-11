@@ -9,7 +9,7 @@ local lobbyUIDataFolder: Folder = lobbyClientFolder.LobbyUIData
 
 local lobbyUIData = require(lobbyUIDataFolder.LobbyUIDatabase)
 
-local lobbyEventHandler = require(handlersFolder.LobbyClientEventHandler)
+require(handlersFolder.LobbyClientEventHandler)
 
 local lobbyUIEventHandler = require(lobbyUIData.uiHandlersFolder.LobbyUIEventHandler)
 
