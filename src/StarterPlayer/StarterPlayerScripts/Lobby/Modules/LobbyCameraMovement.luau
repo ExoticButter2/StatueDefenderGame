@@ -20,7 +20,7 @@ players.LocalPlayer.CharacterAdded:Connect(function(character)
 	playerHumanoid = playerCharacter:WaitForChild("Humanoid")
 end)
 
-local function OnFrameUpdate(dt: number, cameraPositionPart: BasePart)
+local function OnFrameUpdate(cameraPositionPart: BasePart)
 	local playerCFrame: CFrame = playerPrimaryPart.CFrame
 
 	local baseCFrame: CFrame = cameraPositionPart.CFrame
@@ -40,8 +40,8 @@ function LobbyCameraMovement.StartCameraMovement(cameraPositionPart: BasePart)
 
 	print("Starting camera movement")
 
-	frameUpdateConnection = runService.PreRender:Connect(function(dt)
-		OnFrameUpdate(dt, cameraPositionPart)
+	frameUpdateConnection = runService.PreRender:Connect(function()
+		OnFrameUpdate(cameraPositionPart)
 	end)
 
 	print("Started camera movement")
