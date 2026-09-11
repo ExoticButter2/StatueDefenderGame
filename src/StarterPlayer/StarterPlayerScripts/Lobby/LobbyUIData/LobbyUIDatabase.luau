@@ -17,7 +17,7 @@ LobbyUIDatabase.changeLobbyArgsEvent = LobbyUIDatabase.lobbyEventsFolder.ChangeL
 function LobbyUIDatabase.UpdateUIVariables()
 	LobbyUIDatabase.playerGui = players.LocalPlayer.PlayerGui
 
-	LobbyUIDatabase.lobbyUiFolder = LobbyUIDatabase.playerGui.LobbyUI
+	LobbyUIDatabase.lobbyUiFolder = LobbyUIDatabase.playerGui:WaitForChild("LobbyUI")
 
 	LobbyUIDatabase.lobbyHostGui = LobbyUIDatabase.lobbyUiFolder.HostGui
 	LobbyUIDatabase.lobbyPlayerGui = LobbyUIDatabase.lobbyUiFolder.PlayerGui

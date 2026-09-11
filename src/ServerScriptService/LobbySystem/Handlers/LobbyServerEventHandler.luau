@@ -20,6 +20,8 @@ local lobbyPlayerLeaveEvent: BindableEvent = lobbyEventsFolderServer.LobbyPlayer
 local lobbyHostJoinEvent: BindableEvent = lobbyEventsFolderServer.LobbyHostJoinServer
 local lobbyHostLeaveEvent: BindableEvent = lobbyEventsFolderServer.LobbyHostLeaveServer
 
+local lobbyArgsChangeEvent: BindableEvent = lobbyEventsFolderServer.OnLobbyArgsChange
+
 local changeLobbyArgs: RemoteEvent = eventsFolderClient.ChangeLobbyArgs
 
 local lobbyExitRequestEvent: RemoteEvent = eventsFolderClient.LobbyExitRequest
@@ -65,9 +67,21 @@ local function OnLobbyTimerFinish(timerId: number)
 	lobbyManager.OnLobbyTimerFinish(timerId)
 end
 
-local function OnChangeLobbyArgs(player: Player, argsToChange: {})
+local function OnChangeLobbyArgsRequest(player: Player, argsToChange: {})
 	lobbyManager.ChangeLobbyArgs(argsToChange, player)
 	print("Change lobby args event handling")
+end
+
+local function OnLobbyArgsChange(lobbyId: number, setting: string)
+	local lobby = lobbyManager.FindLobby(lobbyId)
+
+	if not lobby then
+		return
+	end
+
+	if setting == "playerLimit" then
+		lobby.lobbyData.playerLimitDisplay:UpdateDisplay()
+	end
 end
 
 function LobbyServerEventHandler.Initialize()
@@ -78,7 +92,8 @@ function LobbyServerEventHandler.Initialize()
 	lobbyHostLeaveEvent.Event:Connect(OnHostLobbyLeave)
 	lobbyStartRequest.OnServerEvent:Connect(OnLobbyStartRequest)
 
-	changeLobbyArgs.OnServerEvent:Connect(OnChangeLobbyArgs)
+	changeLobbyArgs.OnServerEvent:Connect(OnChangeLobbyArgsRequest)
+	lobbyArgsChangeEvent.Event:Connect(OnLobbyArgsChange)
 
 	timerFinishEvent.Event:Connect(OnLobbyTimerFinish)
 end

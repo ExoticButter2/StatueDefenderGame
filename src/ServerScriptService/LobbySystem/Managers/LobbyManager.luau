@@ -1,18 +1,19 @@
 --!strict
 local serverScriptService = game:GetService("ServerScriptService")
-local replicatedStorage = game:GetService("ReplicatedStorage")
 
 local lobbySystemFolder: Folder = serverScriptService.LobbySystem
 
 local lobbyClass = require(lobbySystemFolder.Classes.LobbyClass)
 local lobbyData = require(lobbySystemFolder.Data.LobbyData)
-local lobbyArgsModule = require(replicatedStorage.Lobby.Data.LobbyArgs)
+local lobbyArgsModule = require(lobbySystemFolder.Classes.LobbyArgs)
 
 local helperModulesFolder: Folder = serverScriptService.HelperModules
 
 local timerManager = require(helperModulesFolder.TimerManager)
 local timerModule = require(helperModulesFolder.TimerModuleClass)
 local timerDisplayModule = require(helperModulesFolder.TimerDisplay)
+
+local playerLimitDisplayModule = require(serverScriptService.LobbySystem.Classes.PlayerLimitDisplay)
 
 local lobbiesFolder = game.Workspace.Lobbies
 
@@ -23,6 +24,7 @@ local enterPartName = "EnterPart"
 local exitPartName = "ExitPart"
 local timeTextLabelName = "TimeTextLabel"
 local timeTickSoundName = "TickSound"
+local playerLimitGuiName = "PlayerLimitGui"
 
 LobbyManager.Lobbies = {}
 
@@ -31,16 +33,18 @@ local playerIdToLobbyId = {}
 local lobbyId = 0
 
 local function CreateLobby(lobbyModel: Model): lobbyClass.Lobby
-	local touchPart
-	local enterPart
-	local exitPart
-	local timeTextLabel
-	local timeTickSound
+	local touchPart: BasePart
+	local enterPart: BasePart
+	local exitPart: BasePart
+	local timeTextLabel: TextLabel
+	local timeTickSound: Sound
+	local playerLimitGui: SurfaceGui
 
 	if lobbyModel:IsA("Model") then
-		touchPart = lobbyModel:FindFirstChild(touchPartName)
-		enterPart = lobbyModel:FindFirstChild(enterPartName)
-		exitPart = lobbyModel:FindFirstChild(exitPartName)
+		touchPart = lobbyModel[touchPartName]
+		playerLimitGui = touchPart[playerLimitGuiName]
+		enterPart = lobbyModel[enterPartName]
+		exitPart = lobbyModel[exitPartName]
 		timeTextLabel = lobbyModel:FindFirstChild(timeTextLabelName, true)
 		timeTickSound = lobbyModel:FindFirstChild(timeTickSoundName, true)
 	end
@@ -70,6 +74,11 @@ local function CreateLobby(lobbyModel: Model): lobbyClass.Lobby
 		return
 	end
 
+	if not playerLimitGui then
+		warn("Add surface gui named " .. playerLimitGuiName .. " to the lobby model: " .. lobbyModel.Name)
+		return
+	end
+
 	local timerInstanceId: number = timerManager.CreateLobbyTimer(lobbyId)
 	local timerInstance: timerModule.Timer = timerManager.FindTimer(timerInstanceId)
 
@@ -80,8 +89,23 @@ local function CreateLobby(lobbyModel: Model): lobbyClass.Lobby
 
 	local lobbyArgs: lobbyArgsModule.LobbyArgs = lobbyArgsModule.new()
 
-	local lobbyDataInstance: lobbyData.LobbyData =
-		lobbyData.new(lobbyArgs, lobbyId, touchPart, enterPart, exitPart, true, timerInstance, timerDisplayInstance)
+	local playerLimitDisplayInstance: playerLimitDisplayModule.PlayerLimitDisplay =
+		playerLimitDisplayModule.new(playerLimitGui)
+
+	local lobbyDataInstance: lobbyData.LobbyData = lobbyData.new(
+		lobbyArgs,
+		lobbyId,
+		touchPart,
+		enterPart,
+		exitPart,
+		true,
+		timerInstance,
+		timerDisplayInstance,
+		playerLimitDisplayInstance
+	)
+
+	lobbyArgs.lobbyData = lobbyDataInstance
+	playerLimitDisplayInstance.lobbyData = lobbyDataInstance --cant store lobbydata on initialization
 
 	local lobbyClassInstance: lobbyClass.Lobby = lobbyClass.new(lobbyDataInstance)
 

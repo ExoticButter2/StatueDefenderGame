@@ -41,6 +41,12 @@ export type Lobby = typeof(setmetatable({} :: {
 }))
 
 local function SpeedUpLobbyTimer(self: Lobby)
+	print("Lobby started: " .. tostring(self.lobbyStarted))
+
+	if not self.lobbyStarted then
+		return
+	end
+
 	if self.timerSpedUp then
 		return
 	end
@@ -61,6 +67,8 @@ local function ResetLobbyTimerSpeed(self: Lobby)
 end
 
 function LobbyClass:ResetLobby()
+	self.lobbyStarted = false
+
 	self.lobbyData.players = {}
 	self.lobbyData.args:ResetArgsToDefault()
 
@@ -68,10 +76,14 @@ function LobbyClass:ResetLobby()
 
 	self.lobbyData.timerDisplay:HideDisplay()
 
+	self.lobbyData.playerLimitDisplay:UpdateDisplay()
+
 	print("Reset lobby " .. self.lobbyData.lobbyId)
 end
 
 function LobbyClass:StartLobby()
+	self.lobbyStarted = true
+
 	local lobbyData = self.lobbyData
 	local lobbyArgs = lobbyData.args
 
@@ -84,6 +96,8 @@ function LobbyClass:StartLobby()
 	task.spawn(function()
 		lobbyData.timer:StartTimer()
 	end)
+
+	lobbyData.playerLimitDisplay:UpdateDisplay()
 
 	self:OpenLobby()
 
@@ -237,6 +251,8 @@ function LobbyClass.new(lobbyData: lobbyDataModule.LobbyData): Lobby
 	self.hostId = self.lobbyData.hostId
 	self.lobbyId = self.lobbyData.lobbyId
 
+	self.lobbyStarted = false
+
 	return self
 end
 
@@ -260,11 +276,15 @@ function LobbyClass:AddPlayer(player: Player) --all checks already performed
 	print("Adding player..")
 	print("Players in lobby: " .. #playerIds)
 
-	if not table.find(playerIds, playerId) then
-		table.insert(playerIds, playerId)
-		player.Character:PivotTo(lobbyData.enterPart.CFrame)
-		print("Added " .. player.Name .. " to the lobby")
+	if table.find(playerIds, playerId) then
+		return
 	end
+
+	table.insert(playerIds, playerId)
+	player.Character:PivotTo(lobbyData.enterPart.CFrame)
+	print("Added " .. player.Name .. " to the lobby")
+
+	self.lobbyData.playerLimitDisplay:UpdateDisplay()
 
 	lobbyPlayerJoinRemoteEvent:FireClient(player)
 	lobbyPlayerJoinBindableEvent:Fire(player, lobbyData.lobbyId)
@@ -294,6 +314,8 @@ function LobbyClass:RemovePlayer(player: Player)
 
 	table.remove(lobbyData.playerIds, playerIndex)
 	print("Removed " .. player.Name .. " from the lobby")
+
+	self.lobbyData.playerLimitDisplay:UpdateDisplay()
 
 	lobbyPlayerLeaveRemoteEvent:FireClient(player, lobbyData.lobbyId)
 	lobbyPlayerLeaveBindableEvent:Fire(player, lobbyData.lobbyId)

@@ -1,12 +1,14 @@
 --!strict
 local serverScriptService = game:GetService("ServerScriptService")
-local replicatedStorage = game:GetService("ReplicatedStorage")
 
 local helperModulesFolder: Folder = serverScriptService.HelperModules
+local lobbyClassesFolder: Folder = serverScriptService.LobbySystem.Classes
 
 local timerModule = require(helperModulesFolder.TimerModuleClass)
 local timerDisplayModule = require(helperModulesFolder.TimerDisplay)
-local lobbyArgsModule = require(replicatedStorage.Lobby.Data.LobbyArgs)
+local lobbyArgsModule = require(lobbyClassesFolder.LobbyArgs)
+
+local playerLimitDisplayModule = require(lobbyClassesFolder.PlayerLimitDisplay)
 
 local LobbyData = {}
 
@@ -27,6 +29,7 @@ export type LobbyData = typeof(setmetatable({} :: {
 	lobbyOpen: boolean?,
 	timer: timerModule.Timer,
 	timerDisplay: timerDisplayModule.TimerDisplay,
+	playerLimitDisplay: playerLimitDisplayModule.PlayerLimitDisplay,
 }))
 
 function LobbyData.new(
@@ -37,7 +40,8 @@ function LobbyData.new(
 	exitPart: BasePart,
 	lobbyOpen: boolean?,
 	timer: timerModule.Timer,
-	timerDisplay: timerDisplayModule.TimerDisplay
+	timerDisplay: timerDisplayModule.TimerDisplay,
+	playerLimitDisplay: playerLimitDisplayModule.PlayerLimitDisplay
 ): LobbyData
 	local self = setmetatable({}, { __index = LobbyData })
 
@@ -55,6 +59,8 @@ function LobbyData.new(
 
 	self.timer = timer
 	self.timerDisplay = timerDisplay
+
+	self.playerLimitDisplay = playerLimitDisplay
 
 	return self
 end

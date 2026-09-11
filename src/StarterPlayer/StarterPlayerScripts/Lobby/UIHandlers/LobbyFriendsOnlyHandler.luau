@@ -6,11 +6,11 @@ local lobbyUIScriptsFolder: Folder = starterPlayerScripts.Lobby
 local lobbyUIDataFolder: Folder = lobbyUIScriptsFolder.LobbyUIData
 
 local lobbyUIData = require(lobbyUIDataFolder.LobbyUIDatabase)
-local lobbyArgs = require(replicatedStorage.Lobby.Data.LobbyArgs)
+local lobbyConfig = require(replicatedStorage.Lobby.Data.LobbyConfig)
 
 local LobbyFriendsOnlyHandler = {}
 
-local friendsOnly: boolean = lobbyArgs.defaultFriendsOnly
+local friendsOnly: boolean = lobbyConfig.defaultFriendsOnly
 
 local greenColor: Color3 = Color3.new(0, 1, 0)
 local redColor: Color3 = Color3.new(1, 0, 0)
@@ -29,7 +29,7 @@ local function SetFriendsOnlyToValue(value: number)
 end
 
 function LobbyFriendsOnlyHandler.ResetFriendsOnly()
-	SetFriendsOnlyToValue(lobbyArgs.defaultFriendsOnly)
+	SetFriendsOnlyToValue(lobbyConfig.defaultFriendsOnly)
 end
 
 function LobbyFriendsOnlyHandler.OnFriendsOnlyButtonPress()
