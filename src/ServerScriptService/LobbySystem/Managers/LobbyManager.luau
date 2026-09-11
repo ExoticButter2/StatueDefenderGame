@@ -1,5 +1,6 @@
 --!strict
 local serverScriptService = game:GetService("ServerScriptService")
+local players = game:GetService("Players")
 
 local lobbySystemFolder: Folder = serverScriptService.LobbySystem
 
@@ -243,7 +244,7 @@ function LobbyManager.FindLobbyIdFromPlayerId(playerId: number): number --return
 		return playerLobbyId
 	end
 
-	warn("No lobby id found from player id")
+	warn("No lobby id found from player id by player " .. players:GetPlayerByUserId(playerId).Name)
 	return nil
 end
 
