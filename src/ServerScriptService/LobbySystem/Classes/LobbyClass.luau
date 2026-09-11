@@ -44,8 +44,6 @@ export type Lobby = typeof(setmetatable({} :: {
 }))
 
 local function SpeedUpLobbyTimer(self: Lobby)
-	print("Lobby started: " .. tostring(self.lobbyStarted))
-
 	if not self.lobbyStarted then
 		return
 	end
@@ -56,7 +54,6 @@ local function SpeedUpLobbyTimer(self: Lobby)
 
 	self.lobbyData.timer:ChangeTimerSpeed(fullLobbyTimerSpeed)
 	self.timerSpedUp = true
-	print("Sped up timer speed")
 end
 
 local function ResetLobbyTimerSpeed(self: Lobby)
@@ -66,7 +63,6 @@ local function ResetLobbyTimerSpeed(self: Lobby)
 
 	self.lobbyData.timer:ChangeTimerSpeed(defaultLobbyTimerSpeed)
 	self.timerSpedUp = false
-	print("Reset timer speed")
 end
 
 function LobbyClass:ResetLobby()
@@ -80,8 +76,6 @@ function LobbyClass:ResetLobby()
 	self.lobbyData.timerDisplay:HideDisplay()
 
 	self.lobbyData.playerLimitDisplay:RemoveAllPlayerImages()
-
-	print("Reset lobby " .. self.lobbyData.lobbyId)
 end
 
 function LobbyClass:StartLobby()
@@ -92,7 +86,7 @@ function LobbyClass:StartLobby()
 
 	lobbyData.timerDisplay:ShowDisplay()
 
-	if #lobbyData.playerIds == lobbyData.args.playerLimit then
+	if #lobbyData.playerIds == lobbyArgs.playerLimit then
 		SpeedUpLobbyTimer(self)
 	end
 
@@ -104,10 +98,6 @@ function LobbyClass:StartLobby()
 
 	startCameraMovementEvent:FireClient(players:GetPlayerByUserId(lobbyData.hostId), lobbyData.cameraPart)
 	self:OpenLobby()
-
-	print("Started lobby from lobby class")
-	print("Friends only: " .. tostring(lobbyArgs.friendsOnly))
-	print("Player limit: " .. tostring(lobbyArgs.playerLimit))
 end
 
 -- function LobbyClass:ChangeLobbySettings(args: {}) --changes lobby settings args
@@ -130,28 +120,22 @@ end
 
 function LobbyClass:OpenLobby()
 	self.lobbyData.lobbyOpen = true
-	print("Opened lobby")
 end
 
 function LobbyClass:CloseLobby()
 	self.lobbyData.lobbyOpen = false
-	print("Closed lobby")
 end
 
 local function ValidatePlayerWithConfig(player: Player, self: Lobby)
 	local lobbyData = self.lobbyData
 
 	if lobbyData.args["friendsOnly"] and not player:IsFriendsWithAsync(lobbyData.hostId) then
-		print("Not friends with player")
 		return false
 	elseif #lobbyData.playerIds >= lobbyData.args["playerLimit"] then
-		print("Over player limit")
 		return false
 	elseif table.find(lobbyData.playerIds, player.UserId) then
-		print("Not found in lobby player IDs list")
 		return false
 	elseif not lobbyData.lobbyOpen then
-		print("Lobby not open")
 		return false
 	end
 
@@ -166,7 +150,6 @@ local function AddHost(player: Player, self: Lobby)
 
 	lobbyHostJoinEvent:FireClient(player, self.lobbyData.lobbyId)
 	lobbyHostJoinBindableEvent:Fire(self.lobbyData.lobbyId)
-	print("Added host!")
 end
 
 local function RemoveHost(self: Lobby, player: Player)
@@ -216,7 +199,6 @@ local function OnPlayerLeave(player: Player, self: Lobby)
 end
 
 local function OnPlayerReset(character: Model, self: Lobby)
-	print("Player reset!")
 	local player: Player = players:GetPlayerFromCharacter(character)
 
 	if not player then
@@ -277,16 +259,12 @@ function LobbyClass:AddPlayer(player: Player) --all checks already performed
 	local playerId = player.UserId
 	local playerIds = lobbyData.playerIds
 
-	print("Adding player..")
-	print("Players in lobby: " .. #playerIds)
-
 	if table.find(playerIds, playerId) then
 		return
 	end
 
 	table.insert(playerIds, playerId)
 	player.Character:PivotTo(lobbyData.enterPart.CFrame)
-	print("Added " .. player.Name .. " to the lobby")
 
 	self.lobbyData.playerLimitDisplay:UpdateDisplay()
 
@@ -300,8 +278,6 @@ function LobbyClass:AddPlayer(player: Player) --all checks already performed
 	if #playerIds == self.lobbyData.args.playerLimit then
 		SpeedUpLobbyTimer(self)
 	end
-
-	print("Added player")
 end
 
 function LobbyClass:RemovePlayer(player: Player)
@@ -321,7 +297,6 @@ function LobbyClass:RemovePlayer(player: Player)
 	end
 
 	table.remove(lobbyData.playerIds, playerIndex)
-	print("Removed " .. player.Name .. " from the lobby")
 
 	self.lobbyData.playerLimitDisplay:UpdateDisplay()
 
@@ -353,7 +328,6 @@ function LobbyClass:RemoveAllPlayers()
 
 	self:OpenLobby()
 	self.lobbyData.timer:StopTimer()
-	print("Removed all players from lobby")
 end
 
 function LobbyClass:TeleportAllPlayersToPlace()

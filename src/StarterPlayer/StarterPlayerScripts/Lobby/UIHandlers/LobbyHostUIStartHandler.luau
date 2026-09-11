@@ -18,7 +18,6 @@ local LobbyHostUIStartHandler = {}
 function LobbyHostUIStartHandler.RequestLobbyStart()
 	lobbyStartRequest:FireServer()
 	lobbyHostUIHandler.DisableHostUI()
-	print("Requested lobby start")
 end
 
 return LobbyHostUIStartHandler

@@ -12,7 +12,6 @@ local LobbyPlayerUIExitHandler = {}
 
 function LobbyPlayerUIExitHandler.OnExitButtonPress()
 	lobbyExitRequestEvent:FireServer()
-	print("Exit button pressed")
 end
 
 return LobbyPlayerUIExitHandler

@@ -27,12 +27,10 @@ local function OnStartButtonPress()
 end
 
 local function OnPlayerLimitIncreasePress()
-	print("Player limit increase button pressed")
 	lobbyPlayerLimitHandler.IncreasePlayerLimit()
 end
 
 local function OnPlayerLimitDecreasePress()
-	print("Player limit decrease button pressed")
 	lobbyPlayerLimitHandler.DecreasePlayerLimit()
 end
 
@@ -41,13 +39,11 @@ local function OnExitButtonPress()
 end
 
 local function OnFriendsOnlyButtonPress()
-	print("Friends only button pressed")
 	lobbyFriendsOnlyHandler.OnFriendsOnlyButtonPress()
 end
 
 local function OnHostLeave()
 	lobbyHostUiHandler.ResetUIToDefault()
-	print("Left lobby as host")
 end
 
 local function OnPlayerTeleport()
@@ -96,8 +92,6 @@ function LobbyUIEventHandler.Initialize()
 
 	hostLeaveEvent.OnClientEvent:Connect(OnHostLeave)
 	playerTeleportEvent.OnClientEvent:Connect(OnPlayerTeleport)
-
-	print("Lobby ui event handler initialized")
 end
 
 LobbyUIEventHandler.Initialize()

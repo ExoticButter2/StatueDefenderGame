@@ -23,7 +23,6 @@ function lobbyPlayerUIHandler.EnablePlayerUI()
 
 	tween = tweenService:Create(lobbyUIData.playerExitFrame, tweenInfo, { Position = targetFramePosition })
 
-	print("Enabled Player lobby UI")
 	tween:Play()
 end
 
@@ -35,7 +34,6 @@ function lobbyPlayerUIHandler.DisablePlayerUI()
 
 	lobbyUIData.lobbyPlayerGui.Enabled = false
 	lobbyUIData.playerExitFrame.Position = hiddenFramePosition
-	print("Disabled Player lobby UI")
 end
 
 function lobbyPlayerUIHandler.OnTeleport()

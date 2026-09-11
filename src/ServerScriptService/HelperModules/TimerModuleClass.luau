@@ -35,7 +35,6 @@ function TimerModule.new(timerSpeed: number?, duration: number?, id: number): Ti
 	self.paused = paused
 	self.timerEnabled = false
 
-	print("Timer duration: " .. self.timeRemaining)
 	timerTickEvent.Event:Connect(function(timerId)
 		self:OnTimerTick(timerId)
 	end)
@@ -49,17 +48,11 @@ function TimerModule.new(timerSpeed: number?, duration: number?, id: number): Ti
 	return self
 end
 
-function TimerModule:OnTimerStart()
-	print("Timer started")
-end
+function TimerModule:OnTimerStart() end --whatever you want with these three
 
-function TimerModule:OnTimerTick()
-	print("Timer tick")
-end
+function TimerModule:OnTimerTick() end
 
-function TimerModule:OnTimerFinish()
-	print("Timer finished")
-end
+function TimerModule:OnTimerFinish() end
 
 function TimerModule:StartTimer() --starts time ticking
 	self.timerEnabled = true
@@ -67,9 +60,6 @@ function TimerModule:StartTimer() --starts time ticking
 
 	timerStartEvent:Fire()
 
-	print("Timer duration: " .. self.duration)
-
-	print("Started timer!")
 	while timeElapsed < self.duration and self.timerEnabled do
 		if self.paused then --wait if paused
 			task.wait(0.5)
@@ -78,7 +68,7 @@ function TimerModule:StartTimer() --starts time ticking
 
 		timeElapsed += 1
 		self.timeRemaining = self.duration - timeElapsed --tick
-		print("Time remaining: " .. self.timeRemaining)
+
 		timerTickEvent:Fire(self.id)
 
 		task.wait(1 / self.timerSpeed)
@@ -91,12 +81,10 @@ end
 
 function TimerModule:PauseTimer()
 	self.paused = true
-	print("Paused timer")
 end
 
 function TimerModule:StopTimer()
 	self.timerEnabled = false
-	print("Stopped timer")
 end
 
 function TimerModule:ResumeTimer()
@@ -106,12 +94,10 @@ end
 function TimerModule:ChangeTimerSpeed(newSpeed: number)
 	self.timerSpeed = newSpeed
 	self.prePauseSpeed = newSpeed --to prevent resuming resetting new speed
-	print("Changed timer speed")
 end
 
 function TimerModule:ChangeTimerDuration(newDuration: number)
 	self.duration = newDuration
-	print("Changed timer duration")
 end
 
 return TimerModule

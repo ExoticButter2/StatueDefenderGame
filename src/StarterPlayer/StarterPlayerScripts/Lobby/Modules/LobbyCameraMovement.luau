@@ -8,7 +8,7 @@ local LobbyCameraMovement = {}
 
 local frameUpdateConnection: RBXScriptConnection = nil
 
-local movementIntensity = 1.4 --1 = half rotation to player, 2 = 75% rotation to player...
+local movementIntensity = 1.4 --1 = 50% rotation to player, 2 = 75% rotation to player...
 
 local playerCharacter = players.LocalPlayer.Character or players.LocalPlayer.CharacterAdded:Wait()
 local playerHumanoid = playerCharacter:WaitForChild("Humanoid")
@@ -30,7 +30,6 @@ local function OnFrameUpdate(cameraPositionPart: BasePart)
 	local middleRotation = (targetLookAtRotation + baseCFrame.LookVector / movementIntensity).Unit
 
 	camera.CFrame = CFrame.lookAlong(baseCFrame.Position, middleRotation)
-	print("Updated camera rotation")
 end
 
 function LobbyCameraMovement.StartCameraMovement(cameraPositionPart: BasePart)
@@ -38,13 +37,9 @@ function LobbyCameraMovement.StartCameraMovement(cameraPositionPart: BasePart)
 
 	camera.CFrame = cameraPositionPart.CFrame
 
-	print("Starting camera movement")
-
 	frameUpdateConnection = runService.PreRender:Connect(function()
 		OnFrameUpdate(cameraPositionPart)
 	end)
-
-	print("Started camera movement")
 end
 
 function LobbyCameraMovement.StopCameraMovement()
@@ -58,8 +53,6 @@ function LobbyCameraMovement.StopCameraMovement()
 		frameUpdateConnection:Disconnect()
 		frameUpdateConnection = nil
 	end
-
-	print("Stopped camera movement")
 end
 
 return LobbyCameraMovement

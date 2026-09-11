@@ -120,7 +120,7 @@ local function CreateLobby(lobbyModel: Model): lobbyClass.Lobby
 	LobbyManager.Lobbies[lobbyId] = lobbyClassInstance
 
 	lobbyId += 1
-	print("Created lobby!")
+
 	return lobbyClassInstance
 end
 
@@ -128,8 +128,6 @@ function LobbyManager.Initialize() --creates lobby functionality and enables lob
 	for _, lobbyModel in ipairs(lobbiesFolder:GetChildren()) do
 		CreateLobby(lobbyModel)
 	end
-
-	print("Initialized lobby manager")
 end
 
 function LobbyManager.ChangeLobbyArgs(argsToChange: {}, playerInLobby: Player)
@@ -162,7 +160,6 @@ function LobbyManager.ChangeLobbyArgs(argsToChange: {}, playerInLobby: Player)
 	end
 
 	lobby.lobbyData.args:ChangeArgs(argsToChange)
-	print("Successfully changed lobby args")
 end
 
 function LobbyManager.OpenLobby(openingLobbyId: number)
@@ -203,7 +200,6 @@ function LobbyManager.OnLobbyTimerFinish(timerId: number)
 	end
 
 	lobby:TeleportAllPlayersToPlace() --finally teleport everyone away
-	print("Teleporting all players to place..")
 end
 
 function LobbyManager.StartLobby(startingLobbyId: number)
@@ -215,7 +211,6 @@ function LobbyManager.StartLobby(startingLobbyId: number)
 	end
 
 	lobby:StartLobby()
-	print("Started lobby")
 end
 
 function LobbyManager.StartLobbyFromPlayerId(playerId: number)
@@ -278,7 +273,6 @@ function LobbyManager.RemovePlayerFromLobby(player: Player)
 	end
 
 	lobby:RemovePlayer(player)
-	print("Removed player from lobby via global lookup!")
 end
 
 return LobbyManager

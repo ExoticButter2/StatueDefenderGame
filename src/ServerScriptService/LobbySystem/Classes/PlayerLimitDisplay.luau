@@ -75,10 +75,6 @@ function PlayerLimitDisplay:UpdateDisplay()
 
 	local emptyPlayerSlots = playerLimit - playersInLobby
 
-	print("Lobby player limit: " .. playerLimit)
-	print("Players in lobby: " .. playersInLobby)
-	print("Empty player slots: " .. emptyPlayerSlots)
-
 	if not playersInLobby then
 		warn("Players in lobby data not found")
 		return
@@ -93,8 +89,6 @@ function PlayerLimitDisplay:UpdateDisplay()
 
 	AddImage(filledString, playersInLobby, self)
 	AddImage(emptyString, emptyPlayerSlots, self)
-
-	print("Removed player from player limit display")
 end
 
 return PlayerLimitDisplay

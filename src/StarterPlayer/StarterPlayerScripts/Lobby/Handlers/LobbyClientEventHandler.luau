@@ -24,22 +24,18 @@ stopCameraMovementEvent.OnClientEvent:Connect(lobbyCameraMovement.StopCameraMove
 local LobbyClientEventHandler = {}
 
 local function OnPlayerJoin()
-	print("Joined lobby as regular player and received via event")
 	lobbyPlayerUIHandler.EnablePlayerUI()
 end
 
 local function OnHostJoin()
-	print("Joined lobby as host and received via event")
 	lobbyHostUIHandler.EnableHostUI()
 end
 
 local function OnPlayerLeave()
-	print("Left lobby as player and received via event")
 	lobbyPlayerUIHandler.DisablePlayerUI()
 end
 
 local function OnHostLeave()
-	print("Left lobby as host and received via event")
 	lobbyHostUIHandler.DisableHostUI()
 end
 

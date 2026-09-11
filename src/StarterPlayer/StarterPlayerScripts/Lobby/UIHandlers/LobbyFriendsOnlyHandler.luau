@@ -35,8 +35,6 @@ end
 function LobbyFriendsOnlyHandler.OnFriendsOnlyButtonPress()
 	SetFriendsOnlyToValue(not friendsOnly) --toggle friendsonly
 	lobbyUIData.changeLobbyArgsEvent:FireServer({ ["friendsOnly"] = friendsOnly })
-
-	print("Pressed friends only button")
 end
 
 return LobbyFriendsOnlyHandler

@@ -46,7 +46,6 @@ end
 
 local function OnPlayerLobbyExitRequest(player: Player)
 	lobbyManager.RemovePlayerFromLobby(player)
-	print("Exit request received from server")
 end
 
 local function OnHostLobbyJoin(lobbyId: number)
@@ -58,8 +57,6 @@ local function OnHostLobbyLeave(lobbyId: number)
 end
 
 local function OnLobbyStartRequest(player: Player)
-	print("Start requested from player id: " .. player.UserId)
-	print("Starting lobby..")
 	lobbyManager.StartLobbyFromPlayerId(player.UserId, {})
 end
 
@@ -69,7 +66,6 @@ end
 
 local function OnChangeLobbyArgsRequest(player: Player, argsToChange: {})
 	lobbyManager.ChangeLobbyArgs(argsToChange, player)
-	print("Change lobby args event handling")
 end
 
 local function OnLobbyArgsChange(lobbyId: number, setting: string)

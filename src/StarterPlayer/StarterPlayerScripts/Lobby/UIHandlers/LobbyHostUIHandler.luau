@@ -28,7 +28,6 @@ function lobbyHostUIHandler.EnableHostUI()
 	tween = tweenService:Create(lobbyUIData.hostBackgroundFrame, tweenInfo, { Position = targetFramePosition })
 
 	tween:Play()
-	print("Enabled host ui")
 end
 
 function lobbyHostUIHandler.DisableHostUI()
@@ -39,7 +38,6 @@ function lobbyHostUIHandler.DisableHostUI()
 
 	lobbyUIData.lobbyHostGui.Enabled = false
 	lobbyUIData.hostBackgroundFrame.Position = hiddenFramePosition
-	print("Disabled host ui")
 end
 
 function lobbyHostUIHandler.ResetUIToDefault()

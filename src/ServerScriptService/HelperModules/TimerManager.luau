@@ -39,7 +39,6 @@ function TimerManager.FindTimer(timerId: number)
 end
 
 function TimerManager.FindLobbyIdFromTimerId(timerId: number)
-	print("Finding lobby with timer id: " .. timerId)
 	local lobby = timerIdToLobbyIdDictionary[timerId]
 
 	if not lobby then
