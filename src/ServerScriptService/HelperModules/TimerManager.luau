@@ -28,7 +28,6 @@ function TimerManager.CreateLobbyTimer(lobbyId: number, timerSpeed: number?, tim
 end
 
 function TimerManager.FindTimer(timerId: number)
-	print("Finding timer: " .. timerId)
 	local timer = timerIdToTimerDictionary[timerId]
 
 	if not timer then
