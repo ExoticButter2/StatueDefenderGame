@@ -1,7 +1,6 @@
 --!strict
 local starterPlayer = game:GetService("StarterPlayer")
 local tweenService = game:GetService("TweenService")
-local players = game:GetService("Players")
 
 local starterPlayerScripts: Folder = starterPlayer.StarterPlayerScripts
 local lobbyUIScriptsFolder: Folder = starterPlayerScripts.Lobby
