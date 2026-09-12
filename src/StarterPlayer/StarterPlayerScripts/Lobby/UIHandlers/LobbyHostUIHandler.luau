@@ -13,7 +13,7 @@ local playerLimitHandler = require(lobbyUIData.uiHandlersFolder.LobbyPlayerLimit
 
 local lobbyHostUIHandler = {}
 
-local hiddenFramePosition: UDim2 = UDim2.fromScale(0.25, -0.8)
+local hiddenFramePosition: UDim2 = UDim2.fromScale(0.25, -1.125)
 local targetFramePosition: UDim2 = UDim2.fromScale(0.25, 0.125)
 
 local tweenTime = 0.6
@@ -44,5 +44,11 @@ function lobbyHostUIHandler.ResetUIToDefault()
 	friendsOnlyHandler.ResetFriendsOnly()
 	playerLimitHandler.ResetPlayerLimit()
 end
+
+local function OnStart()
+	lobbyUIData.hostBackgroundFrame.Position = hiddenFramePosition --hide on start
+end
+
+OnStart()
 
 return lobbyHostUIHandler

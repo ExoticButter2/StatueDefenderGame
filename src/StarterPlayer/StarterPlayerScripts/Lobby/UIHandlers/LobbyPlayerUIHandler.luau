@@ -8,7 +8,7 @@ local lobbyUIDataFolder: Folder = lobbyUIScriptsFolder.LobbyUIData
 
 local lobbyUIData = require(lobbyUIDataFolder.LobbyUIDatabase)
 
-local hiddenFramePosition: UDim2 = UDim2.fromScale(0.4, 1)
+local hiddenFramePosition: UDim2 = UDim2.fromScale(0.4, 1.1)
 local targetFramePosition: UDim2 = UDim2.fromScale(0.4, 0.85)
 
 local tweenTime = 0.6
@@ -39,5 +39,11 @@ end
 function lobbyPlayerUIHandler.OnTeleport()
 	lobbyPlayerUIHandler.DisablePlayerUI()
 end
+
+local function OnStart()
+	lobbyUIData.playerExitFrame.Position = hiddenFramePosition --hide on start
+end
+
+OnStart()
 
 return lobbyPlayerUIHandler

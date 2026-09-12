@@ -155,7 +155,6 @@ end
 local function RemoveHost(self: Lobby, player: Player)
 	local lobbyData = self.lobbyData
 
-	print(lobbyData.playerIds)
 	local hostIndex = table.find(lobbyData.playerIds, lobbyData.hostId)
 
 	if not hostIndex then
@@ -281,6 +280,10 @@ function LobbyClass:AddPlayer(player: Player) --all checks already performed
 end
 
 function LobbyClass:RemovePlayer(player: Player)
+	if not player then
+		return
+	end
+
 	local playerId = player.UserId
 	local lobbyData = self.lobbyData
 
@@ -292,7 +295,6 @@ function LobbyClass:RemovePlayer(player: Player)
 	end
 
 	if playerId == lobbyData.hostId and lobbyData.hostId then
-		print("Player " .. player.Name .. " is host")
 		RemoveHost(self, player) --only calls host leave event and removes host from ids table
 		self:RemoveAllPlayers()
 
@@ -301,26 +303,18 @@ function LobbyClass:RemovePlayer(player: Player)
 
 	table.remove(lobbyData.playerIds, playerIndex)
 
-	print("Removed: " .. player.Name .. " from lobby")
-
 	lobbyData.playerLimitDisplay:UpdateDisplay()
-	print("Updated player limit display")
 	lobbyPlayerLeaveRemoteEvent:FireClient(player, lobbyData.lobbyId)
-	print("Fired player leave remote event")
 	lobbyPlayerLeaveBindableEvent:Fire(player, lobbyData.lobbyId)
-	print("Fired plaeyr leave bindable event")
 
 	if self.lobbyStarted then --if lobby already started only then stop
 		stopCameraMovementEvent:FireClient(player, lobbyData.cameraPart)
-		print("Fired stop camera movement event")
 	end
 
 	ResetLobbyTimerSpeed(self)
-	print("Reset lobby timer speed")
 
 	if #lobbyData.playerIds == 0 then
 		self:ResetLobby()
-		print("Reset lobby")
 	end
 
 	if not player.Character then
@@ -329,26 +323,20 @@ function LobbyClass:RemovePlayer(player: Player)
 	end
 
 	player.Character:PivotTo(lobbyData.exitPart.CFrame)
-	print("Done with remove player function")
 end
 
 function LobbyClass:RemoveAllPlayers()
-	print("Removing " .. #self.lobbyData.playerIds .. " players from lobby")
-	print(self.lobbyData.playerIds)
-
 	local playerIdsClone = table.clone(self.lobbyData.playerIds)
 
 	for _, playerId in ipairs(playerIdsClone) do
 		local player: Player = players:GetPlayerByUserId(playerId)
 
-		print("Removing player: " .. player.Name)
+		--print("Removing player: " .. player.Name)
 		self:RemovePlayer(player)
 	end
 
 	self:OpenLobby()
 	self.lobbyData.timer:StopTimer()
-	print(self.lobbyData.playerIds)
-	print("Removed all players")
 end
 
 function LobbyClass:TeleportAllPlayersToPlace()

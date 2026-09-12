@@ -8,7 +8,9 @@ local LobbyCameraMovement = {}
 
 local frameUpdateConnection: RBXScriptConnection = nil
 
-local movementIntensity = 1.4 --1 = 50% rotation to player, 2 = 75% rotation to player...
+local movementIntensity = 0.7 --1 = 50% rotation to player, 2 = 75% rotation to player...
+
+local cameraSmoothing = 7.5
 
 local playerCharacter = players.LocalPlayer.Character or players.LocalPlayer.CharacterAdded:Wait()
 local playerHumanoid = playerCharacter:WaitForChild("Humanoid")
@@ -20,7 +22,7 @@ players.LocalPlayer.CharacterAdded:Connect(function(character)
 	playerHumanoid = playerCharacter:WaitForChild("Humanoid")
 end)
 
-local function OnFrameUpdate(cameraPositionPart: BasePart)
+local function OnFrameUpdate(dt: number, cameraPositionPart: BasePart)
 	local playerCFrame: CFrame = playerPrimaryPart.CFrame
 
 	local baseCFrame: CFrame = cameraPositionPart.CFrame
@@ -29,16 +31,14 @@ local function OnFrameUpdate(cameraPositionPart: BasePart)
 
 	local middleRotation = (targetLookAtRotation + baseCFrame.LookVector / movementIntensity).Unit
 
-	camera.CFrame = CFrame.lookAlong(baseCFrame.Position, middleRotation)
+	camera.CFrame = camera.CFrame:Lerp(CFrame.lookAlong(baseCFrame.Position, middleRotation), cameraSmoothing * dt)
 end
 
 function LobbyCameraMovement.StartCameraMovement(cameraPositionPart: BasePart)
 	camera.CameraType = Enum.CameraType.Scriptable
 
-	camera.CFrame = cameraPositionPart.CFrame
-
-	frameUpdateConnection = runService.PreRender:Connect(function()
-		OnFrameUpdate(cameraPositionPart)
+	frameUpdateConnection = runService.PreRender:Connect(function(dt)
+		OnFrameUpdate(dt, cameraPositionPart)
 	end)
 end
 
