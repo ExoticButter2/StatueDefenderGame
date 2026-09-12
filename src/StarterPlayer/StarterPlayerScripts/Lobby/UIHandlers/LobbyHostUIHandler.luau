@@ -1,6 +1,7 @@
 --!strict
 local starterPlayer = game:GetService("StarterPlayer")
 local tweenService = game:GetService("TweenService")
+local players = game:GetService("Players")
 
 local starterPlayerScripts: Folder = starterPlayer.StarterPlayerScripts
 local lobbyUIScriptsFolder: Folder = starterPlayerScripts.Lobby
@@ -45,10 +46,10 @@ function lobbyHostUIHandler.ResetUIToDefault()
 	playerLimitHandler.ResetPlayerLimit()
 end
 
-local function OnStart()
+function lobbyHostUIHandler.OnStart()
 	lobbyUIData.hostBackgroundFrame.Position = hiddenFramePosition --hide on start
 end
 
-OnStart()
+lobbyHostUIHandler.OnStart()
 
 return lobbyHostUIHandler

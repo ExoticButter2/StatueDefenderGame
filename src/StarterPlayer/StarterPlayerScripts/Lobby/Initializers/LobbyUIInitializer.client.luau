@@ -13,9 +13,19 @@ require(handlersFolder.LobbyClientEventHandler)
 
 local lobbyUIEventHandler = require(lobbyUIData.uiHandlersFolder.LobbyUIEventHandler)
 
-local function OnCharacterAdded()
+local lobbyHostUIHandler = require(lobbyUIData.uiHandlersFolder.LobbyHostUIHandler)
+local lobbyPlayerUIHandler = require(lobbyUIData.uiHandlersFolder.LobbyPlayerUIHandler)
+
+local lobbyCameraMovementModule = require(lobbyUIData.lobbyClientFolder.Modules.LobbyCameraMovement)
+
+local function OnCharacterAdded(character: Model)
 	lobbyUIData.UpdateUIVariables()
 	lobbyUIEventHandler.UpdateUIEvents()
+
+	lobbyHostUIHandler.OnStart()
+	lobbyPlayerUIHandler.OnStart()
+
+	lobbyCameraMovementModule.OnStart(character)
 end
 
 players.LocalPlayer.CharacterAdded:Connect(OnCharacterAdded)

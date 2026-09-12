@@ -40,10 +40,10 @@ function lobbyPlayerUIHandler.OnTeleport()
 	lobbyPlayerUIHandler.DisablePlayerUI()
 end
 
-local function OnStart()
+function lobbyPlayerUIHandler.OnStart()
 	lobbyUIData.playerExitFrame.Position = hiddenFramePosition --hide on start
 end
 
-OnStart()
+lobbyPlayerUIHandler.OnStart()
 
 return lobbyPlayerUIHandler

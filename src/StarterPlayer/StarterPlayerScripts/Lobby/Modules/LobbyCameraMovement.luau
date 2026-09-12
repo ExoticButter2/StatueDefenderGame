@@ -1,6 +1,6 @@
 --!strict
-local players = game:GetService("Players")
 local runService = game:GetService("RunService")
+local players = game:GetService("Players")
 
 local camera = workspace:WaitForChild("Camera")
 
@@ -12,15 +12,17 @@ local movementIntensity = 0.7 --1 = 50% rotation to player, 2 = 75% rotation to 
 
 local cameraSmoothing = 7.5
 
-local playerCharacter = players.LocalPlayer.Character or players.LocalPlayer.CharacterAdded:Wait()
-local playerHumanoid = playerCharacter:WaitForChild("Humanoid")
+local playerCharacter = players.LocalPlayer.character or players.LocalPlayer.CharacterAdded:Wait()
+local playerHumanoid
 
-local playerPrimaryPart = playerCharacter:WaitForChild("HumanoidRootPart")
+local playerPrimaryPart
 
-players.LocalPlayer.CharacterAdded:Connect(function(character)
+function LobbyCameraMovement.OnStart(character: Model)
 	playerPrimaryPart = character:WaitForChild("HumanoidRootPart")
-	playerHumanoid = playerCharacter:WaitForChild("Humanoid")
-end)
+	playerHumanoid = character:WaitForChild("Humanoid")
+
+	LobbyCameraMovement.StopCameraMovement()
+end
 
 local function OnFrameUpdate(dt: number, cameraPositionPart: BasePart)
 	local playerCFrame: CFrame = playerPrimaryPart.CFrame
@@ -43,9 +45,6 @@ function LobbyCameraMovement.StartCameraMovement(cameraPositionPart: BasePart)
 end
 
 function LobbyCameraMovement.StopCameraMovement()
-	camera:Destroy()
-	camera = workspace:WaitForChild("Camera")
-
 	camera.CameraType = Enum.CameraType.Custom
 	camera.CameraSubject = playerHumanoid
 
@@ -54,5 +53,7 @@ function LobbyCameraMovement.StopCameraMovement()
 		frameUpdateConnection = nil
 	end
 end
+
+LobbyCameraMovement.OnStart(playerCharacter)
 
 return LobbyCameraMovement
