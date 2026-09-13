@@ -68,15 +68,11 @@ local function OnChangeLobbyArgsRequest(player: Player, argsToChange: {})
 	lobbyManager.ChangeLobbyArgs(argsToChange, player)
 end
 
-local function OnLobbyArgsChange(lobbyId: number, setting: string)
+local function OnLobbyArgsChange(lobbyId: number)
 	local lobby = lobbyManager.FindLobby(lobbyId)
 
 	if not lobby then
 		return
-	end
-
-	if setting == "playerLimit" then
-		lobby.lobbyData.playerLimitDisplay:UpdateDisplay()
 	end
 end
 

@@ -91,6 +91,8 @@ function LobbyClass:StartLobby()
 
 	lobbyData.timerDisplay:ShowDisplay()
 
+	self.lobbyData.playerLimitDisplay:UpdateDisplay()
+
 	if #lobbyData.playerIds == lobbyArgs.playerLimit then
 		SpeedUpLobbyTimer(self)
 	end
@@ -130,6 +132,8 @@ local function ValidatePlayerWithConfig(player: Player, self: Lobby)
 end
 
 local function AddHost(player: Player, self: Lobby)
+	self.lobbyData.playerLimitDisplay:UpdateDisplay()
+
 	self:AddPlayer(player)
 	self:CloseLobby() --make setup open lobby after
 
