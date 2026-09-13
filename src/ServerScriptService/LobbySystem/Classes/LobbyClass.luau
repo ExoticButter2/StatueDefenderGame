@@ -68,14 +68,19 @@ end
 function LobbyClass:ResetLobby()
 	self.lobbyStarted = false
 
-	self.lobbyData.players = {}
 	self.lobbyData.args:ResetArgsToDefault()
+	self:RemoveAllPlayers()
+	self.lobbyData.playerIds = {}
 
 	self.timerSpedUp = false
 
 	self.lobbyData.timerDisplay:HideDisplay()
 
 	self.lobbyData.playerLimitDisplay:RemoveAllPlayerImages()
+	self.lobbyStarted = false
+
+	self:OpenLobby()
+	self.lobbyData.timer:StopTimer()
 end
 
 function LobbyClass:StartLobby()
@@ -99,24 +104,6 @@ function LobbyClass:StartLobby()
 	startCameraMovementEvent:FireClient(players:GetPlayerByUserId(lobbyData.hostId), lobbyData.cameraPart)
 	self:OpenLobby()
 end
-
--- function LobbyClass:ChangeLobbySettings(args: {}) --changes lobby settings args
--- 	local lobbyData = self.lobbyData
-
--- 	for setting, v in pairs(args) do
--- 		if not lobbyData.args[setting] then --if setting doesn't exist
--- 			warn("No setting found in args with given args table")
--- 			continue
--- 		end
-
--- 		lobbyData.args[setting] = v
--- 	end
-
--- 	local playerLimit = lobbyData.args["playerLimit"]
-
--- 	lobbyData.args["playerLimit"] =
--- 		math.clamp(playerLimit, lobbyDataModule.minPlayerLimit, lobbyDataModule.maxPlayerLimit) --prevent cheaters going beyond limits
--- end
 
 function LobbyClass:OpenLobby()
 	self.lobbyData.lobbyOpen = true
@@ -166,6 +153,8 @@ local function RemoveHost(self: Lobby, player: Player)
 
 	lobbyHostLeaveEvent:FireClient(player, lobbyData.lobbyId)
 	lobbyHostLeaveBindableEvent:Fire(lobbyData.lobbyId)
+	lobbyPlayerLeaveRemoteEvent:FireClient(player, lobbyData.lobbyId)
+	lobbyPlayerLeaveBindableEvent:Fire(player, lobbyData.lobbyId)
 
 	if not player.Character then
 		return
@@ -176,6 +165,7 @@ end
 
 local function AttemptJoin(otherPart: BasePart, self: Lobby) --validate before adding player
 	local player = players:GetPlayerFromCharacter(otherPart.Parent)
+	print("Players in lobby: " .. tostring(#self.lobbyData.playerIds))
 
 	if player then
 		if #self.lobbyData.playerIds == 0 then --if host, dont validate
@@ -193,6 +183,7 @@ local function OnPlayerLeave(player: Player, self: Lobby)
 	local playerId = player.UserId
 
 	if table.find(self.lobbyData.playerIds, playerId) then
+		print("Found player who left game in lobby")
 		self:RemovePlayer(player)
 	end
 end
@@ -281,11 +272,14 @@ end
 
 function LobbyClass:RemovePlayer(player: Player)
 	if not player then
+		warn("No player to remove from lobby")
 		return
 	end
 
 	local playerId = player.UserId
 	local lobbyData = self.lobbyData
+
+	print("Removing player: " .. player.Name)
 
 	local playerIndex = table.find(lobbyData.playerIds, playerId)
 
@@ -294,9 +288,12 @@ function LobbyClass:RemovePlayer(player: Player)
 		return
 	end
 
+	ResetLobbyTimerSpeed(self)
+
 	if playerId == lobbyData.hostId and lobbyData.hostId then
 		RemoveHost(self, player) --only calls host leave event and removes host from ids table
-		self:RemoveAllPlayers()
+
+		self:ResetLobby()
 
 		return
 	end
@@ -307,15 +304,7 @@ function LobbyClass:RemovePlayer(player: Player)
 	lobbyPlayerLeaveRemoteEvent:FireClient(player, lobbyData.lobbyId)
 	lobbyPlayerLeaveBindableEvent:Fire(player, lobbyData.lobbyId)
 
-	if self.lobbyStarted then --if lobby already started only then stop
-		stopCameraMovementEvent:FireClient(player, lobbyData.cameraPart)
-	end
-
-	ResetLobbyTimerSpeed(self)
-
-	if #lobbyData.playerIds == 0 then
-		self:ResetLobby()
-	end
+	stopCameraMovementEvent:FireClient(player, lobbyData.cameraPart)
 
 	if not player.Character then
 		warn("No player character found when removing player")
@@ -334,9 +323,6 @@ function LobbyClass:RemoveAllPlayers()
 		--print("Removing player: " .. player.Name)
 		self:RemovePlayer(player)
 	end
-
-	self:OpenLobby()
-	self.lobbyData.timer:StopTimer()
 end
 
 function LobbyClass:TeleportAllPlayersToPlace()
